@@ -11,13 +11,18 @@ module.exports = {
         },
         addressMac:{
             type: 'string',
+<<<<<<< HEAD
             unique: true,
             columnName: 'address_mac'
+=======
+            unique: true
+>>>>>>> origin/master
         },
         state:{
             type: 'boolean'
         },
         hasCamera:{
+<<<<<<< HEAD
             type:'boolean',
             columnName: 'has_camera'
         },
@@ -28,11 +33,21 @@ module.exports = {
         hasMicro:{
             type:'boolean',
             columnName: 'has_micro'
+=======
+            type:'boolean'
+        },
+        hasBell:{
+            type:'boolean'
+        },
+        hasMicro:{
+            type:'boolean'
+>>>>>>> origin/master
         },
         planning:{
             type:'json'
         },
         isRegister:{
+<<<<<<< HEAD
             type:'boolean',
             columnName: 'is_register'
         },
@@ -43,6 +58,9 @@ module.exports = {
         groups:{
             collection:'group',
             via:'locks'
+=======
+            type:'boolean'
+>>>>>>> origin/master
         }
     }
 };
