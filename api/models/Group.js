@@ -12,6 +12,7 @@ module.exports = {
         },
         code:{
             type: 'string',
+            unique:true,
             required:true
         },
         locks:{
