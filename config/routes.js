@@ -34,8 +34,9 @@ module.exports.routes = {
 
   '/': {
     view: 'homepage'
-  }
+  },
 
+  'get /group/createGroup': "GroupController.createGroup"
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

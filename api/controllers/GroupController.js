@@ -22,6 +22,6 @@ module.exports = {
     giveright: function(req,res){
         var codeGroup = req.param('code')
         var email = req.param('email')
-        GroupeService.giveRight(email)
+        GroupeService.giveRight(codeGroup,email)
     }
 };
