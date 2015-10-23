@@ -33,7 +33,7 @@ module.exports.connections = {
     host: '127.0.0.1',
     user: 'root',
     password: '',
-    database: 'MYSQL_DB_Sails_Projects'
+    database: 'SerrureCo'
   },
 
   /***************************************************************************
