@@ -4,17 +4,28 @@
 
 
 module.exports = {
+    tableName: 'group_user',
 
     attributes: {
         user: {
-            collection:'user',
+            model:'user',
             via:'id',
             columnName: 'user_id'
+
         },
         group:{
-            collection:'group',
+            model:'group',
             via:'id',
             columnName: 'group_id'
+        },
+        validate:{
+            type: 'boolean',
+            defaultsTo:false
+        },
+        administrator:{
+            type: 'boolean',
+            defaultsTo:false
         }
+
     }
 };

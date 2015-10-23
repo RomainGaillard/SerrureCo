@@ -4,6 +4,10 @@
  */
 
 module.exports = {
+    identity: 'lock',
+    joinTableNames: {
+        keyNFCs: 'locks_keynfcs'
+    },
     attributes: {
         name:{
             type: 'string',
@@ -40,14 +44,17 @@ module.exports = {
             collection: 'log',
             via: 'lock'
         },
-        keyNFC_id:{
+        keyNFCs:{
+            columnName : 'lock_id',
             collection:'KeyNFC',
-            via: 'id'
+            via: 'locks',
+            dominant: true
         },
         groups:{
-            collection:'group',
+            collection:'Group',
             via:'locks',
-            type:'boolean'
+            columnName : 'lock_id',
+            tableName: 'groups_locks'
         }
     }
 

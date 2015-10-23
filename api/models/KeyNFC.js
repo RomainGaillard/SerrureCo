@@ -6,7 +6,7 @@
 */
 
 module.exports = {
-
+  identity: 'keynfc',
   attributes: {
   	user_id:{
         type: 'integer',
@@ -18,6 +18,11 @@ module.exports = {
     },
     num:{
     	type:'integer'
+    },
+    locks:{
+        columnName : 'keynfc_id',
+        collection:'Lock',
+        via: 'keyNFCs'
     }
   }
 };

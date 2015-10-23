@@ -16,12 +16,13 @@ module.exports = {
             required:true
         },
         locks:{
-            collection:'lock',
-            via:'groups'
+            collection:'Lock',
+            via:'groups',
+            columnName : 'group_id'
         },
-        users:{
+        groupsUsers:{
             collection:'GroupUser',
-            via: 'user'
+            via:'group'
         }
     }
 };

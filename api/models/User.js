@@ -19,15 +19,15 @@ module.exports = {
         },
         firstname: {
             type: 'string',
-            defaultsTo: 'Account',
+            defaultsTo: 'Account'
         },
         lastname: {
             type: 'string',
-            defaultsTo: 'Unnamed',
+            defaultsTo: 'Unnamed'
         },
-        groups:{
+        groupsUsers:{
             collection:'GroupUser',
-            via:'group'
+            via:'user'
         },
         toJSON: function() {
             var obj = this.toObject();
