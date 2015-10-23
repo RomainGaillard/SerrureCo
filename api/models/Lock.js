@@ -11,25 +11,30 @@ module.exports = {
         },
         addressMac:{
             type: "string",
-            unique: true
+            unique: true,
+            columnName: 'address_mac'
         },
         state:{
             type: "boolean"
         },
         hasCamera:{
-            type:"boolean"
+            type:"boolean",
+            columnName: 'has_camera'
         },
         hasBell:{
-            type:"boolean"
+            type:"boolean",
+            columnName: 'has_bell'
         },
         hasMicro:{
-            type:"boolean"
+            type:"boolean",
+            columnName: 'has_micro'
         },
         planning:{
             type:"json"
         },
         isRegister:{
-            type:"boolean"
+            type:"boolean",
+            columnName: 'is_register'
         }
     }
 };
