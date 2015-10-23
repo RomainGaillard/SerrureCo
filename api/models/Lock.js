@@ -1,6 +1,6 @@
 /**
  * Created by Romain Gaillard on 23/10/2015.
- * Lock: Modèle de la serrure connecté.
+ * Lock: Modï¿½le de la serrure connectï¿½.
  */
 
 module.exports = {
@@ -30,6 +30,11 @@ module.exports = {
         },
         isRegister:{
             type:"boolean"
+        },
+        logs:{
+            collection: 'log',
+            via: 'lock'
         }
     }
+
 };

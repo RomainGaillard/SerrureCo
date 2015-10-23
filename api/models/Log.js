@@ -13,11 +13,12 @@ module.exports = {
           required: true
       },
       lock:{
-          type: 'int',
+          model: 'lock',
           columnName: 'lock_id'
       },
       user:{
-          type: 'int',
+
+          model: 'user',
           columnName: 'user_id'
       }
 
