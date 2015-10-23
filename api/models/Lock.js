@@ -6,30 +6,30 @@
 module.exports = {
     attributes: {
         name:{
-            type: "string",
+            type: 'string',
             required: true
         },
         addressMac:{
-            type: "string",
+            type: 'string',
             unique: true
         },
         state:{
-            type: "boolean"
+            type: 'boolean'
         },
         hasCamera:{
-            type:"boolean"
+            type:'boolean'
         },
         hasBell:{
-            type:"boolean"
+            type:'boolean'
         },
         hasMicro:{
-            type:"boolean"
+            type:'boolean'
         },
         planning:{
-            type:"json"
+            type:'json'
         },
         isRegister:{
-            type:"boolean"
+            type:'boolean'
         }
     }
 };
