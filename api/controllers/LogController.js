@@ -54,14 +54,21 @@ module.exports = {
         }
     },
     addLog: function(req, res) {
-        log = new log();
+        //log = [
+        //    req.param('message'),
+        //    req.param('lock'),
+        //    req.param('user')
+        //];
         log.message = req.param('message');
-        log.lock = new lockModel().id = req.param('lock');
-        log.user = new user().id = req.param('user');
+        lockModel.id = req.param('lock');
+        log.lock = lockModel;
+        user.id = req.param('user');
+        log.user = user;
 
 
-        if (logService.create(log)) {
-            return r
+        if (result = logService.create(log)) {
+            sails.log(result)
+            return res.ok();
         } else {
             return res.badRequest()
         }
