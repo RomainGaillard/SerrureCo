@@ -35,6 +35,10 @@ module.exports = {
         isRegister:{
             type:"boolean",
             columnName: 'is_register'
+        },
+        keyNFC_id:{
+            collection:"KeyNFC",
+            via: 'id'
         }
     }
 };
