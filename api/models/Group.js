@@ -18,6 +18,10 @@ module.exports = {
         locks:{
             collection:'lock',
             via:'groups'
+        },
+        users:{
+            collection:'GroupUser',
+            via: 'user'
         }
     }
 };
