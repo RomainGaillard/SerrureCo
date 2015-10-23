@@ -8,11 +8,15 @@ module.exports = {
     attributes: {
         name: {
             type: 'string',
-            defaultTo:'Default'
+            defaultsTo:'Default'
         },
         code:{
             type: 'string',
             required:true
+        },
+        locks:{
+            collection:'lock',
+            via:'groups'
         }
     }
 };
