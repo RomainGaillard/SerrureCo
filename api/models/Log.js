@@ -17,11 +17,9 @@ module.exports = {
           columnName: 'lock_id'
       },
       user:{
-
           model: 'user',
           columnName: 'user_id'
       }
-
   }
 };
 

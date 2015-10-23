@@ -6,34 +6,48 @@
 module.exports = {
     attributes: {
         name:{
-            type: "string",
+            type: 'string',
             required: true
         },
         addressMac:{
-            type: "string",
-            unique: true
+            type: 'string',
+            unique: true,
+            columnName: 'address_mac'
         },
         state:{
-            type: "boolean"
+            type: 'boolean'
         },
         hasCamera:{
-            type:"boolean"
+            type:'boolean',
+            columnName: 'has_camera'
         },
         hasBell:{
-            type:"boolean"
+            type:'boolean',
+            columnName: 'has_bell'
         },
         hasMicro:{
-            type:"boolean"
+            type:'boolean',
+            columnName: 'has_micro'
         },
         planning:{
-            type:"json"
+            type:'json'
         },
         isRegister:{
-            type:"boolean"
+            type:"boolean",
+            columnName: 'is_register'
         },
         logs:{
             collection: 'log',
             via: 'lock'
+        },
+        keyNFC_id:{
+            collection:'KeyNFC',
+            via: 'id'
+        },
+        groups:{
+            collection:'group',
+            via:'locks',
+            type:'boolean'
         }
     }
 
