@@ -17,8 +17,8 @@ module.exports = {
     	defaultsTo:'keyNFC_'
     },
     num:{
-    	type:'integer'
-      unique:true
+    	type:'integer',
+        unique:true
     }
   }
 };
