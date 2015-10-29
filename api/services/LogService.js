@@ -27,7 +27,17 @@ var LogService = {
      * @description :: Récupère dans la bdd les logs correspondant à la serrure fourni en paramètre
      */
     create: function createService(log) {
-        return Log.create({log:log});
+        var isCreated;
+        Log.create({message: log.message, lock: log.lock.id, user: log.user.id}).exec(function createLog(err, created){
+            if (created) {
+                console.log('log was successfully created !');
+                isCreated = true;
+            } else {
+                isCreated = false;
+            }
+        });
+
+        return isCreated;
     }
 };
 

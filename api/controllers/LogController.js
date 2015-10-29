@@ -65,9 +65,9 @@ module.exports = {
         user.id = req.param('user');
         log.user = user;
 
-
-        if (result = logService.create(log)) {
-            sails.log(result)
+        result = logService.create(log);
+        console.log('('+result+')');
+        if (result) {
             return res.ok();
         } else {
             return res.badRequest()
