@@ -1,11 +1,21 @@
 /**
  * Created by Romain Gaillard on 23/10/2015.
  */
+var GroupService = require('../services/GroupService.js');
+var Group = require('../models/Group.js');
 
 module.exports = {
     createGroup: function(req,res){
         var name = req.param('name');
-        GroupService.create(name);
+        sails.log.debug("Creation GROUP: "+name);
+        GroupService.createGroup(name, function(err){
+            if(err){
+                return res.badRequest;
+            }
+            else{
+                return res.ok();
+            }
+        });
     },
     askaddgroup: function(req,res){
         var codeGroup = req.param('code')
@@ -25,3 +35,4 @@ module.exports = {
         GroupeService.giveRight(codeGroup,email)
     }
 };
+
