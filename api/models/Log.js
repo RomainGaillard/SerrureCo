@@ -20,6 +20,7 @@ module.exports = {
           model: 'user',
           columnName: 'user_id'
       }
-  }
+  },
+    Log : function() {}
 };
 

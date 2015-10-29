@@ -35,7 +35,12 @@ module.exports.routes = {
   '/': {
     view: 'homepage'
   },
-  'post /group/createGroup': "GroupController.createGroup"
+    'get /locks/:id/logs': 'LogController.logs',
+    'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
+    'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
+    'post /addLog': 'LogController.addLog',
+    'get /group/createGroup': "GroupController.createGroup"
+  
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *
