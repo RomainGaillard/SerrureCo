@@ -4,8 +4,11 @@
 
 module.exports = {
     createGroup: function(req,res){
-        var name = req.param('name');
-        GroupService.create(name);
+        sails.log.debug("Creation GROUP !");
+        Group.create({name:"Shit",code:"444"}).exec(function(err,group){
+        });
+        //var name = req.param('name');
+        //return GroupService.createGroup("toto");
     },
     askaddgroup: function(req,res){
         var codeGroup = req.param('code')
@@ -25,3 +28,4 @@ module.exports = {
         GroupeService.giveRight(codeGroup,email)
     }
 };
+

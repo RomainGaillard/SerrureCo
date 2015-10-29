@@ -4,10 +4,9 @@
 
 module.exports = {
 
-    create: function(name){
-        var code = "";
+    createGroup: function(name){
+        var code = "15";
         Group.create({name:name,code:code}).exec(function(err,group){
-
         });
     },
     askAddGroup: function(code){
