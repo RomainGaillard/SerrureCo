@@ -6,6 +6,13 @@
  */
 
 module.exports = {
+	locks: function (req, res) {
+       /* if (locks = logService.FindByLock(req.param('lock')) ) {
+            return res.json(logs, 200)
+        } else { */
+            return res.notFound()
+        //}
+    },
 	countkeyNFC: function(req,res){
 		KeyNFC.count({name:req.param('name')}),exec(function (err,count){
 			if(err){
