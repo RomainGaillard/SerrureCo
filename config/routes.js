@@ -35,12 +35,24 @@ module.exports.routes = {
   '/': {
     view: 'homepage'
   },
-
     'get /locks/:id/logs': 'LogController.logs',
     'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
     'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
+
     'post /logs/add': 'LogController.addLog',
-    'get /group/createGroup': "GroupController.createGroup"
+    'post /group/create': "GroupController.createGroup",
+
+
+  /***************************************************************************
+  * route KeyNFC                                                             *
+  ***************************************************************************/
+  'get /keynfcs/:id/locks': 'KeyNFcController.locks',
+  
+  'post /createkeyNFC/':'KeyNFC.createkeyNFC',
+  'post /updatekeyNFC/':'KeyNFC.updatekeyNFC',
+  'post /removekeyNFC/':'KeyNFC.removekeyNFC'
+  /**************************************************************************/
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *
