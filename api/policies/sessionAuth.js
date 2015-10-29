@@ -23,7 +23,6 @@ module.exports = function(req, res, next) {
       req.passport = passport;
       req.accessToken = token;
       next();
-      console.log()
     })
   }else {
     return res.status(401).json({err: "user should be authenticated"} )

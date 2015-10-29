@@ -9,7 +9,15 @@ var User = {
     lastname: {type: 'string',defaultsTo: 'Unnamed'},
     groupsUsers:{collection:'GroupUser',via:'user' },
     keynfcss:{collection: 'KeyNFC',via: 'owner' },
-    passports : { collection: 'Passport', via: 'user' }
+    passports : { collection: 'Passport', via: 'user' },
+      toJSON: function() {
+          var obj = this.toObject();
+          delete obj.password;
+          delete obj.id;
+          delete obj.createdAt;
+          delete obj.updatedAt;
+          return obj;
+      }
   }
 };
 

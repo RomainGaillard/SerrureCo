@@ -36,6 +36,7 @@ var AuthController = {
 
     // Get a list of available providers for use in your templates.
     Object.keys(strategies).forEach(function (key) {
+      console.log(key+' !!!!!!!!!')
       if (key === 'local') {
         return;
       }
@@ -126,7 +127,9 @@ var AuthController = {
   callback: function (req, res) {
     function tryAgain (err) {
 
+      console.log("test")
       console.log(err)
+      console.log("test")
       // Only certain error messages are returned via req.flash('error', someError)
       // because we shouldn't expose internal authorization errors to the user.
       // We do return a generic error and the original request body.
@@ -142,7 +145,7 @@ var AuthController = {
       // If an error was thrown, redirect the user to the
       // login, register or disconnect action initiator view.
       // These views should take care of rendering the error messages.
-      var action = req.param('action');
+      /*var action = req.param('action');
 
       switch (action) {
         case 'register':
@@ -153,25 +156,43 @@ var AuthController = {
           break;
         default:
           res.redirect('/login');
-      }
+      }*/
     }
 
     passport.callback(req, res, function (err, user, challenges, statuses) {
+      //sails.log.debug(err+'------'+user)
       if (err || !user) {
+        //console.log('test10')
         return tryAgain(challenges);
       }
 
       req.login(user, function (err) {
+        //console.log(user)
         if (err) {
-          return tryAgain(err);
+          //console.log(err)
+          //console.log('test11')
+          //return tryAgain(err);
         }
+        //console.log(passport.accessToken)
+
+        Passport.findOne({protocol:'local', user: user.id},function(err, userPassport){
+          //console.log(userPassport);
+          //console.log(err);
+          user['token'] = userPassport.accessToken;
+          //var obj = user
+          //delete obj.id;
+          //delete obj.createdAt;
+          //delete obj.updatedAt;
+          res.ok(user.toJSON());
+        } )
         
         // Mark the session as authenticated to work with default Sails sessionAuth.js policy
-        req.session.authenticated = true
+        //req.session.authenticated = true
         
         // Upon successful login, send the user to the homepage were req.user
         // will be available.
-        res.redirect('/');
+        //res.ok();
+        //res.redirect('/');
       });
     });
   },
