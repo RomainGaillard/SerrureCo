@@ -35,12 +35,11 @@ module.exports.routes = {
   '/': {
     view: 'homepage'
   },
-
     'get /locks/:id/logs': 'LogController.logs',
     'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
     'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
     'post /addLog': 'LogController.addLog',
-    'get /group/createGroup': "GroupController.createGroup",
+    'post /group/createGroup': "GroupController.createGroup",
 
 
   /***************************************************************************
@@ -52,8 +51,6 @@ module.exports.routes = {
   'post /updatekeyNFC/':'KeyNFC.updatekeyNFC',
   'post /removekeyNFC/':'KeyNFC.removekeyNFC',
   /**************************************************************************/
-
-
 
 
   /***************************************************************************

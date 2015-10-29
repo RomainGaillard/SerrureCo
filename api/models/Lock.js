@@ -1,6 +1,6 @@
 /**
  * Created by Romain Gaillard on 23/10/2015.
- * Lock: Mod�le de la serrure connect�.
+ * Lock: Modele de la serrure connectee.
  */
 
 module.exports = {
@@ -57,5 +57,4 @@ module.exports = {
             tableName: 'groups_locks'
         }
     }
-
 };
