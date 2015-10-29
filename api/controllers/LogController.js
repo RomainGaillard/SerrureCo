@@ -64,10 +64,10 @@ module.exports = {
         log.lock = lockModel;
         user.id = req.param('user');
         log.user = user;
-
-        result = logService.create(log);
-        console.log('('+result+')');
-        if (result) {
+        result = LogService.create(log)
+        console.log(result)
+        if (result)
+        {
             return res.ok();
         } else {
             return res.badRequest()
