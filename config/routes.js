@@ -35,21 +35,29 @@ module.exports.routes = {
   '/': {
     view: 'homepage'
   },
+
+  /***************************************************************************
+   * route LOGS                                                             *
+   ***************************************************************************/
     'get /locks/:id/logs': 'LogController.logs',
     'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
     'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
-    'post /addLog': 'LogController.addLog',
-    'post /group/createGroup': "GroupController.createGroup",
+    'post /log/create': 'LogController.addLog',
 
+  /***************************************************************************
+   * route GROUP                                                             *
+   ***************************************************************************/
+    'post /groups/create': "GroupController.createGroup",
 
   /***************************************************************************
   * route KeyNFC                                                             *
   ***************************************************************************/
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
   
-  'post /createkeyNFC/':'KeyNFC.createkeyNFC',
-  'post /updatekeyNFC/':'KeyNFC.updatekeyNFC',
-  'post /removekeyNFC/':'KeyNFC.removekeyNFC',
+  'post /keyNFC/create/':'KeyNFC.createkeyNFC',
+  'post /keyNFC/update/':'KeyNFC.updatekeyNFC',
+  'post /keyNFC/remove/':'KeyNFC.removekeyNFC',
+  'post /keyNFC/FindbyName/':'KeyNFC.keyNFCFindbyName',
   /**************************************************************************/
 
   //route authentification passport
@@ -65,7 +73,6 @@ module.exports.routes = {
   'get /auth/:provider/callback': 'AuthController.callback',
   'get /auth/:provider/:action': 'AuthController.callback',
 
-  'get /group/createGroup': "GroupController.createGroup"
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

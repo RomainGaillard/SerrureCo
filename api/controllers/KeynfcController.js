@@ -4,6 +4,7 @@
  * @description :: Server-side logic for managing users
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
+var keyNFCModel = require('../models/KeyNFC.js');
 
 module.exports = {
 	locks: function (req, res) {
@@ -21,28 +22,13 @@ module.exports = {
 			return res.send(count);
 		})
 	},
-	keyNFCFindbyName : function(req,res){
-		//KeyNFCservice.CreatekNFC({...});
-		KeyNFC.findBy.param('name').exec(function (err,KeyNFCs){
-		})
-	},
-	createkeyNFC : function (req,res){
-		//KeyNFCservice.CreatekNFC({...});
-		var owner = req.query.KeyNFC ; // url param
-		var name = req.param('name'); // post param
-		var userID = req.param('user_id');
-		var number = req.param('num');
-		KeyNFC.create({name:name, userID:user_id, number:num}).exec(function (err,KeyNFC){
-		})
-	},
 	updatekeyNFC: function (req, res) {
-		//KeyNFCservice.CreatekNFC({...});
-	    var owner = req.query.KeyNFC ; // url param
-		var name = req.param('name'); // post param
-		var userID = req.param('user_id');
-		var number = req.param('num');
-		KeyNFC.update({name:name, userID:user_id, number:num}).exec(function (err,KeyNFC){
-		})
+	    keyNFCModel.owner = req.query.KeyNFC ; // url param
+		keyNFCModel.name = req.param('name'); // post param
+		keyNFCModel.userID = req.param('user_id');
+		keyNFCModel.number = req.param('num');
+		
+		KeyNFCservice.updatekNFC(keyNFCModel);
 	},
 	removekeyNFC: function (req, res) {
 		//KeyNFCservice.CreatekNFC({...});
@@ -54,6 +40,24 @@ module.exports = {
             if (err) return res.json(err, 400);
             return res.json(KeyNFCs[0]);
      });
+	},
+
+/******************************/
+	createkeyNFC : function (req,res){
+		keyNFCModel.owner = req.query.KeyNFC ; // url param
+		keyNFCModel.name = req.param('name'); // post param
+		keyNFCModel.user_id = req.param('user_id');
+		keyNFCModel.number = req.param('num');
+
+		KeyNFCservice.createkNFC(keyNFCModel);
+	},
+	keyNFCFindbyName : function(req,res){
+		keyNFCModel.name = req.param('name');
+		if (keyNFCModel = KeyNFCservice.FindByLock(keyNFCModel) ) {
+            return res.json(logs, 200)
+        } else {
+            return res.notFound()
+        }
 	}
 };
 

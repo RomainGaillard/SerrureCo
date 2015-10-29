@@ -5,14 +5,22 @@
 module.exports = {
 
     createGroup: function(name, callback){
-        var code = "67";
-        return Group.create({name:name,code:code}).exec(function(err, group){
-            if (group) {
-                console.log('Group was successfully created !');
-                callback(false);
-            } else {
-                console.log('Fail create group !');
-                callback(true);
+        Group.query('SELECT MAX(id) as lastId FROM `group`', function(err, results) {
+            if (err){
+                sails.log.debug("Impossible de recuperer le LAST ID GROUP");
+            }
+            else{
+                var lastId = results[0].lastId;
+                var code = ToolsService.generateCode(lastId+1);
+                Group.create({name:name,code:code}).exec(function(err, group){
+                    if (group) {
+                        console.log('Group was successfully created ! CODE: '+code);
+                        callback(false);
+                    } else {
+                        console.log('Fail create group !');
+                        callback(true);
+                    }
+                });
             }
         });
     },
