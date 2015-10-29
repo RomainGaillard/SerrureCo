@@ -24,6 +24,10 @@ module.exports = {
         columnName : 'keynfc_id',
         collection:'Lock',
         via: 'keyNFCs'
+    },
+    owner:{
+        model:'User',
+        columnName: 'user_id'
     }
   }
 };
