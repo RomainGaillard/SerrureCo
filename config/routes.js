@@ -39,7 +39,7 @@ module.exports.routes = {
     'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
     'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
     'post /log/addLog': 'LogController.addLog',
-    'post /groups/createGroup': "GroupController.createGroup"
+    'post /groups/create': "GroupController.createGroup"
 
   /***************************************************************************
   *                                                                          *
