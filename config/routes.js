@@ -39,7 +39,7 @@ module.exports.routes = {
     'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
     'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
     'post /addLog': 'LogController.addLog',
-    'post /group/createGroup': "GroupController.createGroup",
+    'post /group/create': "GroupController.createGroup",
 
 
   /***************************************************************************
@@ -47,9 +47,10 @@ module.exports.routes = {
   ***************************************************************************/
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
   
-  'post /createkeyNFC/':'KeyNFC.createkeyNFC',
-  'post /updatekeyNFC/':'KeyNFC.updatekeyNFC',
-  'post /removekeyNFC/':'KeyNFC.removekeyNFC',
+  'post /keyNFC/create/':'KeyNFC.createkeyNFC',
+  'post /keyNFC/update/':'KeyNFC.updatekeyNFC',
+  'post /keyNFC/remove/':'KeyNFC.removekeyNFC',
+  'post /keyNFC/FindbyName/':'KeyNFC.keyNFCFindbyName',
   /**************************************************************************/
 
 
