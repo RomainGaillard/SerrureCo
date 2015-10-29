@@ -7,7 +7,7 @@
 
 module.exports = {
 	countkeyNFC: function(req,res){
-		KeyNFC.count({name:'posey'}),exec(function (err,count){
+		KeyNFC.count({name:req.param('name')}),exec(function (err,count){
 			if(err){
 				return;
 			}
@@ -15,6 +15,7 @@ module.exports = {
 		})
 	},
 	keyNFCFindbyName : function(req,res){
+		//KeyNFCservice.CreatekNFC({...});
 		KeyNFC.findBy.param('name').exec(function (err,KeyNFCs){
 		})
 	},
@@ -28,6 +29,7 @@ module.exports = {
 		})
 	},
 	updatekeyNFC: function (req, res) {
+		//KeyNFCservice.CreatekNFC({...});
 	    var owner = req.query.KeyNFC ; // url param
 		var name = req.param('name'); // post param
 		var userID = req.param('user_id');
@@ -36,6 +38,7 @@ module.exports = {
 		})
 	},
 	removekeyNFC: function (req, res) {
+		//KeyNFCservice.CreatekNFC({...});
 	    var re = req.query.KeyNFC ; // url param
 		var name = KeyNFC.findBy.param('name').exec(function (err,KeyNFCs){
 		})
