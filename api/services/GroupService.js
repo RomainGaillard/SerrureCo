@@ -4,9 +4,16 @@
 
 module.exports = {
 
-    createGroup: function(name){
-        var code = "15";
-        Group.create({name:name,code:code}).exec(function(err,group){
+    createGroup: function(name, callback){
+        var code = "67";
+        return Group.create({name:name,code:code}).exec(function(err, group){
+            if (group) {
+                console.log('Group was successfully created !');
+                callback(false);
+            } else {
+                console.log('Fail create group !');
+                callback(true);
+            }
         });
     },
     askAddGroup: function(code){
