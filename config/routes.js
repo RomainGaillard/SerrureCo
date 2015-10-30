@@ -50,14 +50,12 @@ module.exports.routes = {
     'post /groups/create': "GroupController.createGroup",
 
   /***************************************************************************
-  * route KeyNFC                                                             *
+  * route KeyNFC               
+  * default route                                                            *
+  * PUT update http://localhost:1337/keynfc/1?num=12&user_id=12              *
   ***************************************************************************/
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
-  
-  'post /keyNFC/create/':'KeyNFC.createkeyNFC',
-  'post /keyNFC/read/:id':'KeyNFC.find',
-  'put /keyNFC/update/:id':'KeyNFC.updatekeyNFC',
-  'delete /keyNFC/destroy/:id':'KeyNFC.removekeyNFC',
+  'post /keyNFC/404/create/':'KeyNFC.create',
   /**************************************************************************/
 
   //route authentification passport
