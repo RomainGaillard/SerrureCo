@@ -21,6 +21,15 @@ module.exports = {
           columnName: 'user_id'
       }
   },
-    Log : function() {}
+  Log : function() {},
+  toArray : function() {
+      return [
+          this.message,
+          this.lock.id,
+          this.user.id,
+          this.createdAt,
+          this.updatedAt
+      ]
+  }
 };
 

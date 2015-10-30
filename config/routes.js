@@ -37,9 +37,9 @@ module.exports.routes = {
   },
 
   /***************************************************************************
-   * route LOGS                                                             *
+   * route LOGS                                                            *
    ***************************************************************************/
-    'get /locks/:id/logs': 'LogController.logs',
+    'get /locks/:id/logs': 'LogController.logsByLock',
     'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
     'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
     'post /log/create': 'LogController.addLog',
@@ -56,9 +56,9 @@ module.exports.routes = {
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
   
   'post /keyNFC/create/':'KeyNFC.createkeyNFC',
-  'post /keyNFC/update/':'KeyNFC.updatekeyNFC',
-  'post /keyNFC/remove/':'KeyNFC.removekeyNFC',
-  'post /keyNFC/FindbyName/':'KeyNFC.keyNFCFindbyName',
+  'post /keyNFC/read/:id':'KeyNFC.find',
+  'put /keyNFC/update/:id':'KeyNFC.updatekeyNFC',
+  'delete /keyNFC/destroy/:id':'KeyNFC.removekeyNFC',
   /**************************************************************************/
 
   //route authentification passport

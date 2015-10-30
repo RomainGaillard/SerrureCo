@@ -6,7 +6,6 @@
 */
 
 module.exports = {
-  identity: 'keynfc',
   attributes: {
   	user_id:{
         type: 'integer',

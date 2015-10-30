@@ -73,8 +73,8 @@ var AuthController = {
     
     // mark the user as logged out for auth purposes
     req.session.authenticated = false;
-    
-    res.redirect('/');
+
+    res.ok();
   },
 
   /**
@@ -156,31 +156,35 @@ var AuthController = {
     }
 
     passport.callback(req, res, function (err, user, challenges, statuses) {
-      //sails.log.debug(err+'------'+user)
       if (err || !user) {
-        //console.log('test10')
         return tryAgain(challenges);
       }
 
       req.login(user, function (err) {
-        //console.log(user)
         if (err) {
-          //console.log(err)
-          //console.log('test11')
-          //return tryAgain(err);
+          console.log(err)
+          return tryAgain(err);
         }
-        //console.log(passport.accessToken)
 
-        Passport.findOne({protocol:'local', user: user.id},function(err, userPassport){
-          //console.log(userPassport);
-          //console.log(err);
-          user['token'] = userPassport.accessToken;
-          //var obj = user
-          //delete obj.id;
-          //delete obj.createdAt;
-          //delete obj.updatedAt;
-          res.ok(user.toJSON());
-        } )
+        var action = req.param('action');
+
+        switch (action) {
+          case 'register':
+            Passport.findOne({protocol: 'local', user: user.id}, function (err, userPassport) {
+              sails.log.debug(err + '------' + userPassport)
+              user['token'] = userPassport.accessToken;
+              res.ok(user.toJSON());
+            })
+            break;
+          case 'disconnect':
+            break;
+          default:
+            Passport.findOne({protocol: 'local', user: user.id}, function (err, userPassport) {
+              sails.log.debug(err + '------' + userPassport)
+              user['token'] = userPassport.accessToken;
+              res.ok(user.toJSON());
+            })
+        }
         
         // Mark the session as authenticated to work with default Sails sessionAuth.js policy
         //req.session.authenticated = true
