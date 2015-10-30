@@ -4,22 +4,26 @@ var LogService = {
     /**
      * @description :: Récupère dans la bdd les logs correspondant à la serrure fourni en paramètre
      */
-    FindByLock: function FindByLockService(lock) {
-        return Log.find({ where: { lock: lock.id }, limit: 200 }).exec(function createLog(err, found){
-            console.log('callback');
+    findByLock: function findByLockService(lock, callback ) {
+        Log.find({ where: { lock: lock.id }, limit: 200 }).exec(function (err, found){
+            if (found) {
+                callback(null,found);
+            } else {
+                callback(err, null);
+            }
         });
     },
     /**
      * @description :: Récupère dans la bdd les logs correspondant à la serrure et la date fournis en paramètre
      */
-    FindByLockAndDate: function FindByLockAndDateService(lock, date) {
+    findByLockAndDate: function findByLockAndDateService(lock, date) {
         return Log.find({ where: { lock: lock.id, date: date.createdAt } })
     },
     /**
      * @description :: Récupère dans la bdd les logs correspondant à la serrure et l'interval
      * de date fournis en paramètre
      */
-    FindByLockAndDualDate: function FindByLockAndDualDateService(lock, start, end) {
+    findByLockAndDualDate: function findByLockAndDualDateService(lock, start, end) {
         return Log.find({ where: { lock: lock.id, date: { '>': start.createdAt, '<': end.createdAt }}})
     },
     /**

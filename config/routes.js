@@ -39,7 +39,7 @@ module.exports.routes = {
   /***************************************************************************
    * route LOGS                                                            *
    ***************************************************************************/
-    'get /locks/:id/logs': 'LogController.logs',
+    'get /locks/:id/logs': 'LogController.logsByLock',
     'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
     'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
     'post /log/create': 'LogController.addLog',

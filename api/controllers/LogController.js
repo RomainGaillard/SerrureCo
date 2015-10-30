@@ -13,20 +13,17 @@ module.exports = {
     /**
      * @description :: Retourne un json avec les logs correspondant à la serrure passé en paramètre
      */
-    logs: function (req, res) {
+    logsByLock: function (req, res) {
         console.log('here');
         lock.id = req.param('id')
-        if (logs = logService.FindByLock(lock) ) {
-           /* var response = [];
-            console.log(logs);
-            for (log in logs) {
-                response.push(log.toArray());
+        LogService.findByLock(lock, function(err, logs){
+            if(err){
+                res.notFound()
             }
-*/          console.log(logs.length);
-            //return res.status(200).json(logs);
-        } else {
-            return res.notFound()
-        }
+            else{
+                res.ok(logs);
+            }
+        });
     },
     /**
      * @description :: Retourne un json avec les logs correspondant à la serrure fourni
@@ -62,14 +59,9 @@ module.exports = {
         }
     },
     addLog: function(req, res) {
-        //log = [
-        //    req.param('message'),
-        //    req.param('lock'),
-        //    req.param('user')
-        //];
         log.message = req.param('message');
-        lockModel.id = req.param('lock');
-        log.lock = lockModel;
+        lock.id = req.param('lock');
+        log.lock = lock;
         user.id = req.param('user');
         log.user = user;
         LogService.create(log, function(err){
