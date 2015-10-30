@@ -3,8 +3,8 @@
  */
 
 module.exports = {
-
-    createGroup: function(name, callback){
+    /*
+    create: function(group, callback){
         Group.query('SELECT MAX(id) as lastId FROM `group`', function(err, results) {
             if (err){
                 sails.log.debug("Impossible de recuperer le LAST ID GROUP");
@@ -12,9 +12,10 @@ module.exports = {
             else{
                 var lastId = results[0].lastId;
                 var code = ToolsService.generateCode(lastId+1);
-                Group.create({name:name,code:code}).exec(function(err, group){
+                Group.create({name:group.name,code:code,locks:group.locks}).exec(function(err, group){
+                    sails.log.debug(group);
                     if (group) {
-                        console.log('Group was successfully created ! CODE: '+code);
+                        console.log('Group was successfully created !');
                         callback(false);
                     } else {
                         console.log('Fail create group !');
@@ -24,20 +25,33 @@ module.exports = {
             }
         });
     },
-    askAddGroup: function(code){
-        Group.findBy({code:codeGroup}).populate("id").exec(function(err,wishes){
-
+    join: function(groupUser, callback){
+        GroupUser.create({user:groupUser.user,group:groupUser.group,admin:groupUser.admin}).exec(function(err,groupUser){
+            sails.log.debug(groupUser);
+            if(groupUser){
+                console.log("The request for join group has been register !");
+                callback(false);
+            }else{
+                console.log("The request for join group fail !")
+                callback(true);
+            }
         })
+    },*/
+    findByCode:function(code){
+
     },
-    exitGroup: function(code){
+    exit: function(code){
         Group.findBy({code:codeGroup}).populate("id").exec(function(err,wishes){
             //
         })
     },
-    removegroup: function(code){
+    remove: function(code){
 
     },
-    giveright: function(code,email){
+    giveRight: function(code,email){
+
+    },
+    giveAccess: function(){
 
     }
 };

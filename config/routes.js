@@ -47,7 +47,8 @@ module.exports.routes = {
   /***************************************************************************
    * route GROUP                                                             *
    ***************************************************************************/
-    'post /groups/create': "GroupController.createGroup",
+    'post /group/create': "GroupController.create",
+    'post /group/join': "GroupController.join",
 
   /***************************************************************************
   * route KeyNFC                                                             *
