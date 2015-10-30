@@ -36,7 +36,6 @@ var AuthController = {
 
     // Get a list of available providers for use in your templates.
     Object.keys(strategies).forEach(function (key) {
-      console.log(key+' !!!!!!!!!')
       if (key === 'local') {
         return;
       }
@@ -126,7 +125,6 @@ var AuthController = {
    */
   callback: function (req, res) {
     function tryAgain (err) {
-
       // Only certain error messages are returned via req.flash('error', someError)
       // because we shouldn't expose internal authorization errors to the user.
       // We do return a generic error and the original request body.

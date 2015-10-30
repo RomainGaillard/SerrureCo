@@ -53,8 +53,7 @@ module.exports = {
         groups:{
             collection:'Group',
             via:'locks',
-            columnName : 'lock_id',
-            tableName: 'groups_locks'
+            columnName : 'lock_id'
         }
     }
 };

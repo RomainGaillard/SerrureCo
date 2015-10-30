@@ -11,18 +11,17 @@ module.exports = {
             model:'user',
             via:'id',
             columnName: 'user_id'
-
         },
         group:{
             model:'group',
-            via:'id',
-            columnName: 'group_id'
+            via:'code',
+            columnName: 'group_code'
         },
         validate:{
             type: 'boolean',
             defaultsTo:false
         },
-        administrator:{
+        admin:{
             type: 'boolean',
             defaultsTo:false
         }
