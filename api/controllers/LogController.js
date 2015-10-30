@@ -6,19 +6,24 @@
  */
 var logService = require('../services/LogService.js');
 var log = require('../models/Log.js');
-var lockModel = require('../models/Lock.js');
+var lock = require('../models/Lock.js');
 var user = require('../models/User.js');
 
 module.exports = {
     /**
      * @description :: Retourne un json avec les logs correspondant à la serrure passé en paramètre
      */
-    logs: function (req, res) {
-        if (logs = logService.FindByLock(req.param('lock')) ) {
-            return res.json(logs, 200)
-        } else {
-            return res.notFound()
-        }
+    logsByLock: function (req, res) {
+        console.log('here');
+        lock.id = req.param('id')
+        LogService.findByLock(lock, function(err, logs){
+            if(err){
+                res.notFound()
+            }
+            else{
+                res.ok(logs);
+            }
+        });
     },
     /**
      * @description :: Retourne un json avec les logs correspondant à la serrure fourni
@@ -54,24 +59,19 @@ module.exports = {
         }
     },
     addLog: function(req, res) {
-        //log = [
-        //    req.param('message'),
-        //    req.param('lock'),
-        //    req.param('user')
-        //];
         log.message = req.param('message');
-        lockModel.id = req.param('lock');
-        log.lock = lockModel;
+        lock.id = req.param('lock');
+        log.lock = lock;
         user.id = req.param('user');
         log.user = user;
-
-        result = logService.create(log);
-        console.log('('+result+')');
-        if (result) {
-            return res.ok();
-        } else {
-            return res.badRequest()
-        }
+        LogService.create(log, function(err){
+            if(err){
+                return res.badRequest;
+            }
+            else{
+                return res.ok();
+            }
+        });
     }
 };
 
