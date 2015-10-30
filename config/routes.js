@@ -53,11 +53,11 @@ module.exports.routes = {
   * route KeyNFC                                                             *
   ***************************************************************************/
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
-  
+  /**CRUD **/
   'post /keyNFC/create/':'KeyNFC.createkeyNFC',
-  'post /keyNFC/update/':'KeyNFC.updatekeyNFC',
-  'post /keyNFC/remove/':'KeyNFC.removekeyNFC',
-  'post /keyNFC/FindbyName/':'KeyNFC.keyNFCFindbyName',
+  'post /keyNFC/read/:id':'KeyNFC.find',
+  'put /keyNFC/update/:id':'KeyNFC.updatekeyNFC',
+  'delete /keyNFC/destroy/:id':'KeyNFC.removekeyNFC',
   /**************************************************************************/
 
   //route authentification passport
