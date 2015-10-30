@@ -360,7 +360,6 @@ passport.disconnect = function (req, res, next) {
       if (err) {
           return next(err);
       }
-
       next(null, user);
     });
   });

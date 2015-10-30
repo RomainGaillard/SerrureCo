@@ -26,7 +26,9 @@ var crypto    = require('crypto');
 exports.register = function (req, res, next) {
   var email    = req.param('email')
     , username = req.param('username')
-    , password = req.param('password');
+    , password = req.param('password')
+      , firstname = req.param('firstname')
+      , lastname = req.param('lastname');;
 
   if (!email) {
     req.flash('error', 'Error.Passport.Email.Missing');
@@ -46,6 +48,8 @@ exports.register = function (req, res, next) {
   User.create({
     username : username
   , email    : email
+    ,firstname : firstname
+    ,lastname : lastname
   }, function (err, user) {
     if (err) {
       if (err.code === 'E_VALIDATION') {
@@ -55,7 +59,6 @@ exports.register = function (req, res, next) {
           req.flash('error', 'Error.Passport.User.Exists');
         }
       }
-
       return next(err);
     }
 
