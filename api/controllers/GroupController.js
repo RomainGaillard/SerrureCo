@@ -1,7 +1,6 @@
 /**
  * Created by Romain Gaillard on 23/10/2015.
  */
-var GroupService = require('../services/GroupService.js');
 var Group = require('../models/Group.js');
 
 module.exports = {

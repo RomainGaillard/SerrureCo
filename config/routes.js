@@ -36,26 +36,42 @@ module.exports.routes = {
     view: 'homepage'
   },
 
-    'post /group/create': "GroupController.createGroup",
+  /***************************************************************************
+   * route LOGS                                                            *
+   ***************************************************************************/
+    'get /locks/:id/logs': 'LogController.logs',
+    'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
+    'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
+    'post /log/create': 'LogController.addLog',
 
   /***************************************************************************
-  * route Log                                                             *
-  ****************************************************************************/
-  'get /locks/:id/logs': 'LogController.logs',
-  'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
-  'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
-
-  'post /logs/add': 'LogController.addLog',
+   * route GROUP                                                             *
+   ***************************************************************************/
+    'post /groups/create': "GroupController.createGroup",
 
   /***************************************************************************
   * route KeyNFC                                                             *
   ***************************************************************************/
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
-  
-  'post /createkeyNFC/':'KeyNFC.createkeyNFC',
-  'post /updatekeyNFC/':'KeyNFC.updatekeyNFC',
-  'post /removekeyNFC/':'KeyNFC.removekeyNFC'
+
+  'post /keyNFC/create/':'KeyNFC.createkeyNFC',
+  'post /keyNFC/update/':'KeyNFC.updatekeyNFC',
+  'post /keyNFC/remove/':'KeyNFC.removekeyNFC',
+  'post /keyNFC/FindbyName/':'KeyNFC.keyNFCFindbyName',
   /**************************************************************************/
+
+  //route authentification passport
+
+  'get /login': 'AuthController.login',
+  'get /logout': 'AuthController.logout',
+  'get /register': 'AuthController.register',
+
+  'post /auth/local': 'AuthController.callback',
+  'post /auth/local/:action': 'AuthController.callback',
+
+  'get /auth/:provider': 'AuthController.provider',
+  'get /auth/:provider/callback': 'AuthController.callback',
+  'get /auth/:provider/:action': 'AuthController.callback',
 
   /***************************************************************************
   *                                                                          *
