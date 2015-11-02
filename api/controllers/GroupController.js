@@ -204,14 +204,12 @@ module.exports = {
                 GroupService.checkIsAdmin(groupUserModel,function(err,admin){
                     if(err)
                         return res.badRequest("addLock:"+err);
-                    if(admin){
-                        res.redirect("/group/"+group.id+"/locks/add/"+req.param('id'));
-                    }
+                    if(admin)
+                        return res.redirect("/group/"+group.id+"/locks/add/"+req.param('id'));
                     else{
                         sails.log.debug("addLock: Error: User has no right to do this action.");
-                        res.badRequest("addLock: Error: User has no right to do this action.");
+                        return res.badRequest("addLock: Error: User has no right to do this action.");
                     }
-
                 })
             }else{
                 sails.log.debug("addLock: Error:"+err);
