@@ -46,7 +46,7 @@ module.exports = {
                     return callback(err,null);
                 if(admin){
                     User.findOne({email:email}).exec(function(err,user){
-                        if(err){
+                        if(err || user === undefined){
                             sails.log.debug("updateGroupUser: Error: The email was not found :"+err);
                             return callback("Error: The email was not found :"+err,null);
                         }
@@ -77,15 +77,24 @@ module.exports = {
         })
     },
     createGroupUser:function(groupUserModel,callback){
-        GroupUser.create({user:groupUserModel.user,group:groupUserModel.group,admin:groupUserModel.admin,validate:groupUserModel.validate}).exec(function(err,groupUser){
-            if(err) {
-                sails.log.debug("createGroupUser: Error: Can't create GroupUser ! ");
-                return callback("Error: Can't create GroupUser :" + err, null);
+        // Vérifier que l'entrée n'existe pas déjà dans la table.
+        this.checkIfGroupUserExist(groupUserModel,function(err,exist){
+            if(err)
+                return callback(err,null);
+            if(exist){
+                sails.log.debug("createGroupUser: Error: Link already existing !");
+                return callback("Error: Link already existing !",null)
             }
-            sails.log.debug('createGroupUser: Success: GroupUser was successfully created !!');
-            console.log(groupUser);
-            return callback(null,groupUser);
-        });
+            GroupUser.create({user:groupUserModel.user,group:groupUserModel.group,admin:groupUserModel.admin,validate:groupUserModel.validate}).exec(function(err,groupUser){
+                if(err) {
+                    sails.log.debug("createGroupUser: Error: Can't create GroupUser ! ");
+                    return callback("Error: Can't create GroupUser :" + err, null);
+                }
+                sails.log.debug('createGroupUser: Success: GroupUser was successfully created !!');
+                console.log(groupUser);
+                return callback(null,groupUser);
+            });
+        })
     },
     destroyGroupUserbyGroup: function(group_id,callback){
         GroupUser.destroy({group_id:group_id}).exec(function(err){

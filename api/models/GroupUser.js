@@ -10,11 +10,13 @@ module.exports = {
         user: {
             model:'user',
             via:'id',
+            required:true,
             columnName: 'user_id'
         },
         group:{
             model:'group',
             via:'id',
+            required:true,
             columnName: 'group_id'
         },
         validate:{

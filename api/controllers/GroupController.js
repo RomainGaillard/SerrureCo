@@ -51,13 +51,19 @@ module.exports = {
                 if(err)
                     return res.badRequest("join group: "+err);
                 if(admin){
-                    groupUserModel.user = req.param('user_id');
-                    groupUserModel.admin = req.param('admin');
-                    groupUserModel.validate = true;
-                    GroupService.createGroupUser(groupUserModel,function(err,groupUser){
-                        if(err)
-                            return res.badRequest("join group: The user hasn't been added to the group :"+err);
-                        return res.ok("join group:  The user has been added to the group : " + groupUser);
+                    User.findOne({email:req.param("user_email")}).exec(function(err,user){
+                        if(err || user === undefined){
+                            sails.log.debug("join group: Error: Can't find user email !");
+                            return res.badRequest("join group: Error: Can't find user email !");
+                        }
+                        groupUserModel.user = user.id;
+                        groupUserModel.admin = req.param('admin');
+                        groupUserModel.validate = true;
+                        GroupService.createGroupUser(groupUserModel,function(err,groupUser){
+                            if(err)
+                                return res.badRequest("join group: The user hasn't been added to the group :"+err);
+                            return res.ok({message:"join group:  The user has been added to the group : ",groupUser:groupUser});
+                        })
                     })
                 }
                 else{
@@ -116,18 +122,10 @@ module.exports = {
                 return res.badRequest("askAccess group: "+ err);
             groupUserModel.group = group.id;
             groupUserModel.user = req.passport.user.id;
-            GroupService.checkIfGroupUserExist(groupUserModel,function(err,exist){
+            GroupService.createGroupUser(groupUserModel,function(err,groupUser){
                 if(err)
-                    return res.badRequest("askAccess group: "+err);
-                if(exist){
-                    sails.log.debug("askAccess group: Error: Link already existing !");
-                    return res.badRequest("askAccess group: Error: Link already existing !")
-                }
-                GroupService.createGroupUser(groupUserModel,function(err,groupUser){
-                    if(err)
-                        return res.badRequest("askAccess group: Error: The request for join group fail !" + err);
-                    return res.ok({message:"askAccess group: Success: The request for join group has been register !",groupUser:groupUser});
-                })
+                    return res.badRequest("askAccess group: Error: The request for join group fail !" + err);
+                return res.ok({message:"askAccess group: Success: The request for join group has been register !",groupUser:groupUser});
             })
         });
     },
@@ -137,7 +135,7 @@ module.exports = {
         GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,function(err,success){
             if(err)
                 return res.badRequest("giveAccess group: "+err);
-            return res.ok("giveAccess group: "+success);
+            return res.ok({message:"giveAccess group: ",groupUser:success});
         })
     },
     exit: function(req,res){
