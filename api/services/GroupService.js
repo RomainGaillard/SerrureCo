@@ -24,8 +24,8 @@ module.exports = {
             return callback("Error: Can't check if user is admin of the group. : "+err,null);
         })
     },
-    checkIfGroupUserExist:function(groupUser,callback){
-        GroupUser.find({ where : {group: groupUserModel.group,user:groupUserModel.user}}).exec(function (err, group){
+    checkIfGroupUserExist:function(groupUserModel,callback){
+        GroupUser.find({ where : {group_id: groupUserModel.group,user_id:groupUserModel.user}}).exec(function (err, group){
             if(group){
                 if(group.length<=0)
                     return callback(null,false);

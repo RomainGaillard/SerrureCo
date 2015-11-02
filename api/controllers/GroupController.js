@@ -126,7 +126,7 @@ module.exports = {
                 GroupService.createGroupUser(groupUserModel,function(err,groupUser){
                     if(err)
                         return res.badRequest("askAccess group: Error: The request for join group fail !" + err);
-                    return res.ok("askAccess group: Success: The request for join group has been register !" + groupUser);
+                    return res.ok({message:"askAccess group: Success: The request for join group has been register !",groupUser:groupUser});
                 })
             })
         });
