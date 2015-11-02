@@ -51,7 +51,7 @@ module.exports = {
                 if(err)
                     return res.badRequest("join group: "+err);
                 if(admin){
-                    User.findOne({email:req.param("user_email")}).exec(function(err,user){
+                    User.findOne({email:req.param("email")}).exec(function(err,user){
                         if(err || user === undefined){
                             sails.log.debug("join group: Error: Can't find user email !");
                             return res.badRequest("join group: Error: Can't find user email !");
@@ -108,7 +108,8 @@ module.exports = {
     giveRight: function(req,res){
         var codeGroup = req.param('code');
         var email = req.param('email');
-        GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,function(err,success){
+        var giveAdmin = true;
+        GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,giveAdmin,function(err,success){
             if(err)
                 return res.basRequest("giveRight group: "+err);
             return res.ok("giveRight group"+success);
@@ -132,7 +133,8 @@ module.exports = {
     giveAccess: function(req,res){
         var codeGroup = req.param('code');
         var email = req.param('email');
-        GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,function(err,success){
+        var giveAdmin = false;
+        GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,giveAdmin,function(err,success){
             if(err)
                 return res.badRequest("giveAccess group: "+err);
             return res.ok({message:"giveAccess group: ",groupUser:success});

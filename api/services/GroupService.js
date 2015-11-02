@@ -35,7 +35,7 @@ module.exports = {
             return callback("Error - Can't check if link exist in the Group_User table : "+err,null);
         });
     },
-    updateGroupUser:function(codeGroup,user_admin,email,callback){
+    updateGroupUser:function(codeGroup,user_admin,email,giveAdmin,callback){
         GroupService.findByCode(codeGroup,function(err,group){
             if(err)
                 return callback(err,null);
@@ -55,7 +55,7 @@ module.exports = {
                                 sails.log.debug("updateGroupUser: Error: This user is not associated with this group. : "+err);
                                 return callback("Error: This user is not associated with this group. : "+err,null);
                             }
-                            groupUser.admin = true;
+                            groupUser.admin = giveAdmin;
                             groupUser.valiate = true;
                             groupUser.save(function(err){
                                 if(err){
@@ -64,7 +64,7 @@ module.exports = {
                                 }
                                 sails.log.debug("updateGroupUser: Success: groupUser has been modified !");
                                 console.log(groupUser);
-                                return callback(null,"Success: groupUser has been modified !" +groupUser);
+                                return callback(null,{message:"Success: groupUser has been modified !",groupUser:groupUser});
                             })
                         })
                     })
