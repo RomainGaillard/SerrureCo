@@ -216,6 +216,25 @@ module.exports = {
                 return res.badRequest("addLock: Error:"+err);
             }
         })
+    },
+    removeLock:function(req,res){
+        var codeGroup = req.param("code");
+        GroupService.findByCode(codeGroup,function(err,group){
+            if(group){
+                groupUserModel.group = group.id;
+                groupUserModel.user = req.passport.user.id;
+                GroupService.checkIsAdmin(groupUserModel,function(err,admin){
+                    if(err)
+                        return res.badRequest("removeLock:"+err);
+                    if(admin)
+                        return res.redirect("/group/"+group.id+"/locks/remove/"+req.param("id"));
+                    else{
+                        sails.log.debg("removeLock: Error: User has no right to do this action.");
+                        return res.badRequest("removeLock: Error: User has no right to do this action.");
+                    }
+                })
+            }
+        })
     }
 };
 
