@@ -105,16 +105,6 @@ module.exports = {
             });
         })
     },
-    giveRight: function(req,res){
-        var codeGroup = req.param('code');
-        var email = req.param('email');
-        var giveAdmin = true;
-        GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,giveAdmin,function(err,success){
-            if(err)
-                return res.basRequest("giveRight group: "+err);
-            return res.ok("giveRight group"+success);
-        });
-    },
     askAccess: function(req,res){
         var codeGroup = req.param('code');
         // Récupérer l'id du groupe en fonction de son code.
@@ -147,12 +137,31 @@ module.exports = {
         GroupService.findByCode(codeGroup,function(err,group){
             if(err)
                 return res.badRequest("exit group: "+err);
-            groupUserModel.group_id = group.id;
-            groupUserModel.user_id = req.passport.user.id;
+            groupUserModel.group = group.id;
+            groupUserModel.user = req.passport.user.id;
             GroupService.destroyGroupUserbyUserAndGroup(groupUserModel,function(err,success){
                 if(err)
                     return res.badRequest("exit group: "+err);
                 return res.ok("exit group: "+success);
+            })
+        })
+    },
+    exitUser:function(req,res){
+        var codeGroup = req.param("code");
+        var email = req.param("email");
+        User.findOne({where:{email:email}}).exec(function(err,user){
+            if(err || user === undefined)
+                return res.badRequest("exitUser: Error: Can't find email user");
+            GroupService.findByCode(codeGroup,function(err,group){
+                if(err)
+                    return res.badRequest("exitUser: "+err);
+                groupUserModel.group = group.id;
+                groupUserModel.user = user.id;
+                GroupService.destroyGroupUserbyUserAndGroup(groupUserModel,function(err,success){
+                    if(err)
+                        return res.badRequest("exitUser group: "+err);
+                    return res.ok("exitUser group: "+success);
+                })
             })
         })
     }

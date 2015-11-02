@@ -109,10 +109,10 @@ module.exports = {
     destroyGroupUserbyUserAndGroup: function(groupUserModel,callback){
         this.checkIsAdmin(groupUserModel,function(err,admin){
             if(err)
-                return callback(err);
+                return callback(err,null);
             if(admin)
-                return callback("Error: Admin can't exit his group ! Please edit the right.");
-            GroupUser.destroy({where:{group_id:groupUserModel.group_id,user_id:groupUserModel.user_id}}).exec(function(err){
+                return callback("Error: Admin can't exit his group ! Please edit the right.",null);
+            GroupUser.destroy({where:{group_id:groupUserModel.group,user_id:groupUserModel.user}}).exec(function(err){
                 if(err) {
                     sails.log.debug("destroyGroupUserbyUserAndGroup: Error: The GroupUser couldn't be deleted");
                     return callback("Error: The GroupUser couldn't be deleted" + err,null);

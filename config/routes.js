@@ -56,7 +56,6 @@ module.exports.routes = {
     'post /group/join/:code': "GroupController.join",
     'post /group/askAccess/:code':"GroupController.askAccess",
     'put /group/giveAccess/:code':"GroupController.giveAccess",
-    'put /group/giveRight/:code':"GroupController.giveRight",
     'delete /group/exit/:code':"GroupController.exit",
     'delete /group/destroy/:code': "GroupController.destroy",
 
