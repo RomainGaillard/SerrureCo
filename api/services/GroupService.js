@@ -24,34 +24,25 @@ module.exports = {
                 });
             }
         });
+    }*/
+    findByCode:function(code,callback){
+        Group.findOne({ where: { code: code }}).exec(function (err, group){
+            if (group) {
+                callback(null,group);
+            } else {
+                callback(err, null);
+            }
+        });
     },
-    join: function(groupUser, callback){
-        GroupUser.create({user:groupUser.user,group:groupUser.group,admin:groupUser.admin}).exec(function(err,groupUser){
-            sails.log.debug(groupUser);
+    checkIsAdmin:function(groupUser,callback){
+        GroupUser.findOne({where:{group:groupUser.group,user:groupUser.user}}).exec(function(err,groupUser){
             if(groupUser){
-                console.log("The request for join group has been register !");
-                callback(false);
-            }else{
-                console.log("The request for join group fail !")
-                callback(true);
+                callback(null,groupUser.admin)
+            }
+            else{
+                callback(err,null);
             }
         })
-    },*/
-    findByCode:function(code){
-
-    },
-    exit: function(code){
-        Group.findBy({code:codeGroup}).populate("id").exec(function(err,wishes){
-            //
-        })
-    },
-    remove: function(code){
-
-    },
-    giveRight: function(code,email){
-
-    },
-    giveAccess: function(){
-
     }
+
 };

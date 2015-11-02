@@ -49,10 +49,11 @@ module.exports.routes = {
     'post /log/create': 'LogController.addLog',
 
   /***************************************************************************
-   * route GROUP                                                             *
+   * route GROUP
    ***************************************************************************/
     'post /group/create': "GroupController.create",
     'post /group/join': "GroupController.join",
+    'delete /group/destroy/:id': "GroupController.destroy",
 
   /***************************************************************************
   * route KeyNFC                                                             *
@@ -60,7 +61,7 @@ module.exports.routes = {
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
   
   'post /keyNFC/create/':'KeyNFC.createkeyNFC',
-  'post /keyNFC/read/:id':'KeyNFC.find',
+  'post /keyNFC/:id':'KeyNFC.find',
   'put /keyNFC/update/:id':'KeyNFC.updatekeyNFC',
   'delete /keyNFC/destroy/:id':'KeyNFC.removekeyNFC',
   /**************************************************************************/

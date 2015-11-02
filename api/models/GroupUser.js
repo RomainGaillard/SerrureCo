@@ -14,8 +14,8 @@ module.exports = {
         },
         group:{
             model:'group',
-            via:'code',
-            columnName: 'group_code'
+            via:'id',
+            columnName: 'group_id'
         },
         validate:{
             type: 'boolean',
