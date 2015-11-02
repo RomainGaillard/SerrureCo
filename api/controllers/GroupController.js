@@ -184,9 +184,16 @@ module.exports = {
                 return res.ok({message:"edit group: Success: group has been modified !",group:group});
             })
         })
-
-
-
+    },
+    group:function(req,res){
+        GroupUser.find({user:req.passport.user.id}).populate('group').exec(function(err,group){
+            if(group){
+                sails.log.debug("group: Success: "+group);
+                return res.ok(group);
+            }
+            sails.log.debug("group: Error:"+err);
+            return res.badRequest("group: Error:"+err);
+        })
     }
 };
 
