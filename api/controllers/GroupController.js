@@ -133,7 +133,9 @@ module.exports = {
     giveAccess: function(req,res){
         var codeGroup = req.param('code');
         var email = req.param('email');
-        var giveAdmin = false;
+        var giveAdmin = req.param('admin');
+        if(giveAdmin === undefined)
+            giveAdmin = false;
         GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,giveAdmin,function(err,success){
             if(err)
                 return res.badRequest("giveAccess group: "+err);

@@ -107,13 +107,19 @@ module.exports = {
         })
     },
     destroyGroupUserbyUserAndGroup: function(groupUserModel,callback){
-        GroupUser.destroy({where:{group_id:groupUserModel.group_id,user_id:groupUserModel.user_id}}).exec(function(err){
-            if(err) {
-                sails.log.debug("destroyGroupUserbyUserAndGroup: Error: The GroupUser couldn't be deleted after Group.destroy");
-                return callback("Error: The GroupUser couldn't be deleted after Group.destroy : " + err,null);
-            }
-            sails.log.debug("destroyGroupUserbyGroup: Success: The GroupUser was deleted.")
-            return callback(null,"Success: The GroupUser was deleted.");
+        this.checkIsAdmin(groupUserModel,function(err,admin){
+            if(err)
+                return callback(err);
+            if(admin)
+                return callback("Error: Admin can't exit his group ! Please edit the right.");
+            GroupUser.destroy({where:{group_id:groupUserModel.group_id,user_id:groupUserModel.user_id}}).exec(function(err){
+                if(err) {
+                    sails.log.debug("destroyGroupUserbyUserAndGroup: Error: The GroupUser couldn't be deleted");
+                    return callback("Error: The GroupUser couldn't be deleted" + err,null);
+                }
+                sails.log.debug("destroyGroupUserbyGroup: Success: The GroupUser was deleted.")
+                return callback(null,"Success: The GroupUser was deleted.");
+            })
         })
     }
 };
