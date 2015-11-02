@@ -194,6 +194,30 @@ module.exports = {
             sails.log.debug("group: Error:"+err);
             return res.badRequest("group: Error:"+err);
         })
+    },
+    addLock:function(req,res){
+        var codeGroup = req.param("code");
+        GroupService.findByCode(codeGroup,function(err,group){
+            if(group){
+                groupUserModel.group = group.id;
+                groupUserModel.user = req.passport.user.id;
+                GroupService.checkIsAdmin(groupUserModel,function(err,admin){
+                    if(err)
+                        return res.badRequest("addLock:"+err);
+                    if(admin){
+                        res.redirect("/group/"+group.id+"/locks/add/"+req.param('id'));
+                    }
+                    else{
+                        sails.log.debug("addLock: Error: User has no right to do this action.");
+                        res.badRequest("addLock: Error: User has no right to do this action.");
+                    }
+
+                })
+            }else{
+                sails.log.debug("addLock: Error:"+err);
+                return res.badRequest("addLock: Error:"+err);
+            }
+        })
     }
 };
 
