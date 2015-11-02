@@ -17,14 +17,11 @@ module.exports = {
         });
     },
     checkIsAdmin:function(groupUser,callback){
-        GroupUser.findOne({where:{group:groupUser.group,user:groupUser.user}}).exec(function(err,groupUser){
-            if(groupUser){
-                callback(null,groupUser.admin)
-            }
-            else{
-                sails.log.debug("checkIsAdmin group: Error: Can't check if user is admin of the group. : "+err);
-                callback("Error: Can't check if user is admin of the group. : "+err,null);
-            }
+        GroupUser.findOne({where:{group_id:groupUser.group,user_id:groupUser.user}}).exec(function(err,groupUser){
+            if(groupUser)
+                return callback(null,groupUser.admin)
+            sails.log.debug("checkIsAdmin group: Error: Can't check if user is admin of the group. : "+err);
+            return callback("Error: Can't check if user is admin of the group. : "+err,null);
         })
     },
     checkIfGroupUserExist:function(groupUser,callback){
@@ -72,8 +69,10 @@ module.exports = {
                         })
                     })
                 }
-                sails.log.debug("updateGroupUser: Error: User has no right to do this action.")
-                return callback("Error: User has no right to do this action.",null)
+                else{
+                    sails.log.debug("updateGroupUser: Error: User has no right to do this action.")
+                    return callback("Error: User has no right to do this action.",null)
+                }
             })
         })
     },

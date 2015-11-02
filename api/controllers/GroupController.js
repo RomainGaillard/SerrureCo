@@ -60,8 +60,10 @@ module.exports = {
                         return res.ok("join group:  The user has been added to the group : " + groupUser);
                     })
                 }
-                sails.log.debug("join group: Error: User has no right to do this action.");
-                return res.badRequest("join group: Error: User has no right to do this action.");
+                else{
+                    sails.log.debug("join group: Error: User has no right to do this action.");
+                    return res.badRequest("join group: Error: User has no right to do this action.");
+                }
             })
         });
     },
@@ -75,26 +77,24 @@ module.exports = {
             groupUserModel.user = req.passport.user.id;
             GroupService.checkIsAdmin(groupUserModel,function(err,admin){
                 if(err)
-                    res.badRequest("destroy group: "+err);
+                    return res.badRequest("destroy group: "+err);
+                if(admin){
+                    Group.destroy({id:groupUserModel.group}).exec(function(err){
+                        if(err) {
+                            sails.log.debug("destroy group: Error: The group can't be deleted. :" + err);
+                            return res.badRequest("destroy group: Error: The group can't be deleted. :" + err);
+                        }
+                        sails.log.debug("destroy group: Success: The group was deleted.");
+                        GroupService.destroyGroupUserbyGroup(groupUserModel.group,function(err){
+                            if(err)
+                                return res.basRequest("destroy group: "+err);
+                            return res.ok("destroy group: Success: The Group and the GroupUser was deleted.")
+                        })
+                    });
+                }
                 else{
-                    if(admin){
-                        Group.destroy({id:groupUserModel.group}).exec(function(err){
-                            if(err){
-                                sails.log.debug("destroy group: Error: The group can't be deleted.");
-                            }else{
-                                sails.log.debug("destroy group: Success: The group was deleted.");
-                                res.ok("destroy group: Success: The group was deleted.")
-                                GroupService.destroyGroupUserbyGroup(groupUserModel.group,function(err){
-                                    if(err)
-                                        return res.basRequest("destroy group"+err);
-                                    return res.ok("destroy group: Success: The GroupUser was deleted.")
-                                })
-                            }
-                        });
-                    }else{
-                        sails.log.debug("destroy group: Error: User has no right to do this action.")
-                        res.badRequest("destroy group: Error: User has no right to do this action.")
-                    }
+                    sails.log.debug("destroy group: Error: User has no right to do this action.")
+                    return res.badRequest("destroy group: Error: User has no right to do this action.")
                 }
             });
         })
