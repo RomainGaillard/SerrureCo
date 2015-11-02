@@ -51,7 +51,7 @@ module.exports = {
                             return callback("Error: The email was not found :"+err,null);
                         }
                         GroupUser.findOne({where:{user_id:user.id,group_id:group.id}}).exec(function (err,groupUser){
-                            if(err){
+                            if(err || groupUser === undefined){
                                 sails.log.debug("updateGroupUser: Error: This user is not associated with this group. : "+err);
                                 return callback("Error: This user is not associated with this group. : "+err,null);
                             }
