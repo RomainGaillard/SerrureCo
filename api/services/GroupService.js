@@ -56,7 +56,7 @@ module.exports = {
                                 return callback("Error: This user is not associated with this group. : "+err,null);
                             }
                             groupUser.admin = giveAdmin;
-                            groupUser.valiate = true;
+                            groupUser.validate = true;
                             groupUser.save(function(err){
                                 if(err){
                                     sails.log.debug("updateGroupUser: Error: Can't save groupUser. :"+ err);
