@@ -146,7 +146,7 @@ module.exports = {
             })
         })
     },
-    exitUser:function(req,res){
+    exclude:function(req,res){
         var codeGroup = req.param("code");
         var email = req.param("email");
         User.findOne({where:{email:email}}).exec(function(err,user){
