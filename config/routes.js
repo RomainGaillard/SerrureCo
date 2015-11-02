@@ -53,6 +53,7 @@ module.exports.routes = {
    * route Group
    ***************************************************************************/
     'post /group/create': "GroupController.create",
+    'put /group/edit/:code':"GroupController.edit",
     'post /group/join/:code': "GroupController.join",
     'post /group/askAccess/:code':"GroupController.askAccess",
     'put /group/giveAccess/:code':"GroupController.giveAccess",

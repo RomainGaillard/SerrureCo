@@ -37,7 +37,7 @@ module.exports = {
     },
     updateGroupUser:function(codeGroup,user_admin,email,giveAdmin,callback){
         GroupService.findByCode(codeGroup,function(err,group){
-            if(err)
+            if(err || group === undefined)
                 return callback(err,null);
             groupUserModel.group = group.id;
             groupUserModel.user = user_admin;

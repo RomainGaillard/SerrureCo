@@ -42,7 +42,7 @@ module.exports = {
         // Le createur du groupe ajoute des membres.
         var codeGroup = req.param('code');
         GroupService.findByCode(codeGroup,function(err,group){
-            if(err)
+            if(err || group === undefined)
                 return res.badRequest("join group: "+err);
 
             groupUserModel.group = group.id;
@@ -77,7 +77,7 @@ module.exports = {
         // Vérifier que c'est bien l'admin du groupe !
         var codeGroup = req.param("code");
         GroupService.findByCode(codeGroup,function(err,group){
-            if(err)
+            if(err || group === undefined)
                 return res.badRequest("destroy: "+err);
             groupUserModel.group = group.id;
             groupUserModel.user = req.passport.user.id;
@@ -109,7 +109,7 @@ module.exports = {
         var codeGroup = req.param('code');
         // Récupérer l'id du groupe en fonction de son code.
         GroupService.findByCode(codeGroup,function(err,group){
-            if(err)
+            if(err || group === undefined)
                 return res.badRequest("askAccess group: "+ err);
             groupUserModel.group = group.id;
             groupUserModel.user = req.passport.user.id;
@@ -135,7 +135,7 @@ module.exports = {
     exit: function(req,res){
         var codeGroup = req.param('code')
         GroupService.findByCode(codeGroup,function(err,group){
-            if(err)
+            if(err || group === undefined)
                 return res.badRequest("exit group: "+err);
             groupUserModel.group = group.id;
             groupUserModel.user = req.passport.user.id;
@@ -151,19 +151,42 @@ module.exports = {
         var email = req.param("email");
         User.findOne({where:{email:email}}).exec(function(err,user){
             if(err || user === undefined)
-                return res.badRequest("exitUser: Error: Can't find email user");
+                return res.badRequest("exclude: Error: Can't find email user");
             GroupService.findByCode(codeGroup,function(err,group){
-                if(err)
-                    return res.badRequest("exitUser: "+err);
+                if(err || group === undefined)
+                    return res.badRequest("exclude: "+err);
                 groupUserModel.group = group.id;
                 groupUserModel.user = user.id;
                 GroupService.destroyGroupUserbyUserAndGroup(groupUserModel,function(err,success){
                     if(err)
-                        return res.badRequest("exitUser group: "+err);
-                    return res.ok("exitUser group: "+success);
+                        return res.badRequest("exclude group: "+err);
+                    return res.ok("exclude group: "+success);
                 })
             })
         })
+    },
+    edit:function(req,res){
+        var codeGroup = req.param('code');
+        var name  = req.param("name");
+        Group.findOne({code:codeGroup}).exec(function(err,group){
+            if(err || group === undefined){
+                sails.log.debug("edit group: Error: The group code not found !");
+                return res.badRequest("edit group: Error: The group code not found ! :"+err);
+            }
+            group.name = name;
+            group.save(function(err){
+                if(err){
+                    sails.log.debug("edit group: Error: Can't save group. :"+ err);
+                    return res.badRequest("edit group: Error: Can't save group :"+ err);
+                }
+                sails.log.debug("edit group: Success: group has been modified !");
+                console.log(group);
+                return res.ok({message:"edit group: Success: group has been modified !",group:group});
+            })
+        })
+
+
+
     }
 };
 
