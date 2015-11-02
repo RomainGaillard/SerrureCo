@@ -37,11 +37,12 @@ module.exports.routes = {
   },
 
   /***************************************************************************
-   * route LOGS                                                            *
+   * route User                                                           *
    ***************************************************************************/
     'put /user/update': 'UserController.update',
+
   /***************************************************************************
-   * route LOGS                                                            *
+   * route Logs                                                           *
    ***************************************************************************/
     'get /locks/:id/logs': 'LogController.logsByLock',
     'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
@@ -49,11 +50,16 @@ module.exports.routes = {
     'post /log/create': 'LogController.addLog',
 
   /***************************************************************************
-   * route GROUP
+   * route Group
    ***************************************************************************/
     'post /group/create': "GroupController.create",
-    'post /group/join': "GroupController.join",
-    'delete /group/destroy/:id': "GroupController.destroy",
+    'post /group/join/:code': "GroupController.join",
+    'get /group/askAccess/:code':"GroupController.askAccess",
+    'put /group/giveAccess/:code':"GroupController.giveAccess",
+    'put /group/giveRight/:code':"GroupController.giveRight",
+    'delete /group/exit/:code':"GroupController.exit",
+    'delete /group/destroy/:code': "GroupController.destroy",
+
 
   /***************************************************************************
   * route KeyNFC                                                             *

@@ -29,7 +29,6 @@ module.exports = {
                 }
                 return res.send(200, user);
             })
-
         })
         //User.update({firstname: req.passport.user.firstname},{firstname: name}, {lastname: req.passport.user.lastname}, {lastname: lastname}, {email: req.passport.user.email}, {email: email}).exec(function(err, callback) {
         //    if(err){
