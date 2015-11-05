@@ -39,10 +39,6 @@ module.exports.routes = {
   /***************************************************************************
    * route LOGS                                                            *
    ***************************************************************************/
-    'put /user/update': 'UserController.update',
-  /***************************************************************************
-   * route LOGS                                                            *
-   ***************************************************************************/
     'get /locks/:id/logs': 'LogController.logsByLock',
     'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
     'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
@@ -51,16 +47,19 @@ module.exports.routes = {
   /***************************************************************************
    * route GROUP                                                             *
    ***************************************************************************/
-    'post /group/create': "GroupController.create",
-    'post /group/join': "GroupController.join",
+    'post /groups/create': "GroupController.create",
 
   /***************************************************************************
-  * route KeyNFC               
+  * route KeyNFC                                                             *
   * default route                                                            *
   * PUT update http://localhost:1337/keynfc/1?num=12&user_id=12              *
   ***************************************************************************/
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
+  
   'post /keyNFC/404/create/':'KeyNFC.create',
+  'post /keyNFC/:name':'KeyNFC.findByName',
+  'post /keyNFC':'KeyNFC',
+
   /**************************************************************************/
 
   //route authentification passport
@@ -75,6 +74,11 @@ module.exports.routes = {
   'get /auth/:provider': 'AuthController.provider',
   'get /auth/:provider/callback': 'AuthController.callback',
   'get /auth/:provider/:action': 'AuthController.callback',
+
+  /***************************************************************************
+  * route User                                                               *
+  ***************************************************************************/
+  'post /user/:email':'UserController.findByEmail',
 
   /***************************************************************************
   *                                                                          *
