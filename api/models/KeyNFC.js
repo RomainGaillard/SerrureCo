@@ -7,10 +7,6 @@
 
 module.exports = {
   attributes: {
-  	user_id:{
-        type: 'integer',
-        required: true
-    },
     name:{
     	type: 'string',
     	defaultsTo:'keyNFC_'
@@ -19,13 +15,9 @@ module.exports = {
     	type:'integer',
         unique:true
     },
-    locks:{
-        columnName : 'keynfc_id',
-        collection:'Lock',
-        via: 'keyNFCs'
-    },
     owner:{
         model:'User',
+        required:true,
         columnName: 'user_id'
     }
   }

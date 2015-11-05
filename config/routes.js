@@ -53,16 +53,25 @@ module.exports.routes = {
    * route Group
    ***************************************************************************/
     'get /group':"GroupController.group",
+    'get /group/:code/user':"GroupController.users",
     'post /group/create': "GroupController.create",
-    'post /group/:code/locks/add/:id':"GroupController.addLock",
-    'post /group/:code/locks/remove/:id':"GroupController.removeLock",
-    'put /group/edit/:code':"GroupController.edit",
+    'post /group/:code/lock/add/:id':"GroupController.addLock",
+    'post /group/:code/lock/remove/:id':"GroupController.removeLock",
     'post /group/join/:code': "GroupController.join",
     'post /group/askAccess/:code':"GroupController.askAccess",
+
+    'put /group/edit/:code':"GroupController.edit",
     'put /group/giveAccess/:code':"GroupController.giveAccess",
+
     'delete /group/exit/:code':"GroupController.exit",
     'delete /group/exclude/:code':"GroupController.exclude",
     'delete /group/destroy/:code': "GroupController.destroy",
+
+
+  /***************************************************************************
+   * route Lock                                                           *
+   ***************************************************************************/
+    'post /lock/create':"LockController.create",
 
 
   /***************************************************************************

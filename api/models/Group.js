@@ -20,7 +20,7 @@ module.exports = {
             via:'groups',
             columnName : 'group_id'
         },
-        groupsUsers:{
+        groupUsers:{
             collection:'GroupUser',
             via:'group'
         }
