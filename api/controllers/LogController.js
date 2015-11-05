@@ -34,7 +34,6 @@ module.exports = {
             req.param('lock'),
             req.param('date')
         );
-
         if (logs) {
             return res.json(logs, 200)
         } else {
