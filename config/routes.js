@@ -37,7 +37,12 @@ module.exports.routes = {
   },
 
   /***************************************************************************
-   * route LOGS                                                            *
+   * route User                                                           *
+   ***************************************************************************/
+    'put /user/update': 'UserController.update',
+
+  /***************************************************************************
+   * route Logs                                                           *
    ***************************************************************************/
     'get /locks/:id/logs': 'LogController.logsByLock',
     'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
@@ -45,21 +50,28 @@ module.exports.routes = {
     'post /log/create': 'LogController.addLog',
 
   /***************************************************************************
-   * route GROUP                                                             *
+   * route Group
    ***************************************************************************/
-    'post /groups/create': "GroupController.create",
-
+    'get /group':"GroupController.group",
+    'post /group/create': "GroupController.create",
+    'post /group/:code/locks/add/:id':"GroupController.addLock",
+    'put /group/edit/:code':"GroupController.edit",
+    'post /group/join/:code': "GroupController.join",
+    'post /group/askAccess/:code':"GroupController.askAccess",
+    'put /group/giveAccess/:code':"GroupController.giveAccess",
+    'delete /group/exit/:code':"GroupController.exit",
+    'delete /group/exclude/:code':"GroupController.exclude",
+    'delete /group/destroy/:code': "GroupController.destroy",
   /***************************************************************************
   * route KeyNFC                                                             *
   * default route                                                            *
   * PUT update http://localhost:1337/keynfc/1?num=12&user_id=12              *
   ***************************************************************************/
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
+  'get /keyNFC':'KeyNFC.keyNFC',
   
   'post /keyNFC/404/create/':'KeyNFC.create',
   'post /keyNFC/:name':'KeyNFC.findByName',
-  'post /keyNFC':'KeyNFC',
-
   /**************************************************************************/
 
   //route authentification passport

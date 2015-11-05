@@ -8,7 +8,7 @@ var User = {
     firstname: { type: 'string', defaultsTo: 'Account' },
     lastname: {type: 'string',defaultsTo: 'Unnamed'},
     groupsUsers:{collection:'GroupUser',via:'user' },
-    keynfcss:{collection: 'KeyNFC',via: 'owner' },
+    keynfcs:{collection: 'KeyNFC',via: 'owner' },
     passports : { collection: 'Passport', via: 'user' },
       toJSON: function() {
           var obj = this.toObject();

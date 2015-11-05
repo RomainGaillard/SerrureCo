@@ -8,14 +8,7 @@ var keyNFCModel = require('../models/KeyNFC.js');
 var LockModel = require('../models/Lock.js');
 
 module.exports = {
-	locks: function (req, res) {
-       /* if (locks = logService.FindByLock(req.param('lock')) ) {
-            return res.json(logs, 200)
-        } else { */
-            //return res.notFound()
-        //}
-    },
-/****************************** Fonctionnel ****************************/
+
 	create: function (req, res, next) {
     var params = req.params.all();
     KeyNFC.create(params, function(err, keynfc) {
@@ -31,5 +24,16 @@ module.exports = {
             if (err) return next(err);
             res.status(201).json(found);
         });
+    },
+
+    keyNFC:function(req,res){
+        User.find({id:req.passport.user.id}).populate('keynfcs').exec(function(err,keynfcs){
+            if(keynfcs){
+                sails.log.debug("keynfc: Success: "+keynfcs);
+                return res.ok(keynfcs);
+            }
+            sails.log.debug("keynfc: Error:"+err);
+            return res.badRequest("keynfc: Error:"+err);
+        })
     }
 };
