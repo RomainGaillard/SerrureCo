@@ -66,8 +66,6 @@ module.exports.routes = {
     'delete /group/exit/:code':"GroupController.exit",
     'delete /group/exclude/:code':"GroupController.exclude",
     'delete /group/destroy/:code': "GroupController.destroy",
-
-
   /***************************************************************************
    * route Lock                                                           *
    ***************************************************************************/
@@ -76,13 +74,14 @@ module.exports.routes = {
 
   /***************************************************************************
   * route KeyNFC                                                             *
+  * default route                                                            *
+  * PUT update http://localhost:1337/keynfc/1?num=12&user_id=12              *
   ***************************************************************************/
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
+  'get /keyNFC':'KeyNFC.keyNFC',
   
-  'post /keyNFC/create/':'KeyNFC.createkeyNFC',
-  'post /keyNFC/:id':'KeyNFC.find',
-  'put /keyNFC/update/:id':'KeyNFC.updatekeyNFC',
-  'delete /keyNFC/destroy/:id':'KeyNFC.removekeyNFC',
+  'post /keyNFC/404/create/':'KeyNFC.create',
+  'post /keyNFC/:name':'KeyNFC.findByName',
   /**************************************************************************/
 
   //route authentification passport
@@ -97,6 +96,11 @@ module.exports.routes = {
   'get /auth/:provider': 'AuthController.provider',
   'get /auth/:provider/callback': 'AuthController.callback',
   'get /auth/:provider/:action': 'AuthController.callback',
+
+  /***************************************************************************
+  * route User                                                               *
+  ***************************************************************************/
+  'post /user/:email':'UserController.findByEmail',
 
   /***************************************************************************
   *                                                                          *

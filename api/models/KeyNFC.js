@@ -9,7 +9,7 @@ module.exports = {
   attributes: {
     name:{
     	type: 'string',
-    	defaultsTo:'keyNFC_'
+        defaultsTo:'keyNFC_'
     },
     num:{
     	type:'integer',
