@@ -247,13 +247,13 @@ module.exports = {
                         sails.log.debug({message: 'Success:',users:users})
                         return res.ok({message: 'Success:',users:users})
                     }
-                    sails.log.debug("users: Error: "+err);
-                    return res.badRequest("users: Error: "+err);
+                    sails.log.debug("user Group: Error: "+err);
+                    return res.badRequest("user Group: Error: "+err);
                 })
             }
             else{
-                sails.log.debug("users: Error: group not found. :"+err)
-                return res.badRequest("users: Error: group not found. :"+err);
+                sails.log.debug("user Group: Error: group not found. :"+err)
+                return res.badRequest("user Group: Error: group not found. :"+err);
             }
         })
     }

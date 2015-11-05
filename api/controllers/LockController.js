@@ -13,13 +13,24 @@ module.exports = {
     create: function(req,res){
         var name = req.param("name");
         var addressMac = req.param("addressMac");
-        var  state = req.param("state");
+        var state = req.param("state");
         var hasCamera = req.param("hasCamera");
         var hasBell = req.param("hasBell");
         var hasMicro = req.param("hasMicro");
         var planning = req.param("planning");
         var isRegister = req.param("isRegister");
         var groups = req.param("groups");
+
+        // groups rechercher id des codes.
+
+        Lock.create({name:name,addressMac:addressMac, groups:groups}).exec(function(err,lock){
+            if(lock){
+                sails.log.debug("create Lock: Success: "+lock);
+                return res.ok({message:"create Lock: Success !",lock:lock});
+            }
+            sails.log.debug("create Lock: Error:"+err);
+            return res.badRequest("create Lock: Error:"+err);
+        })
     }
 };
 

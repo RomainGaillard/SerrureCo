@@ -55,8 +55,7 @@ module.exports = {
         },*/
         groups:{
             collection:'Group',
-            via:'locks',
-            columnName : 'lock_id'
+            via:'locks'
         }
     }
 };
