@@ -2,56 +2,124 @@
  * Created by Romain Gaillard on 23/10/2015.
  */
 
+var groupUserModel = require('../models/GroupUser.js');
+
 module.exports = {
-    /*
-    create: function(group, callback){
-        Group.query('SELECT MAX(id) as lastId FROM `group`', function(err, results) {
-            if (err){
-                sails.log.debug("Impossible de recuperer le LAST ID GROUP");
-            }
-            else{
-                var lastId = results[0].lastId;
-                var code = ToolsService.generateCode(lastId+1);
-                Group.create({name:group.name,code:code,locks:group.locks}).exec(function(err, group){
-                    sails.log.debug(group);
-                    if (group) {
-                        console.log('Group was successfully created !');
-                        callback(false);
-                    } else {
-                        console.log('Fail create group !');
-                        callback(true);
-                    }
-                });
+
+    findByCode:function(code,callback){
+        Group.findOne({ where: { code: code }}).exec(function (err, group){
+            if (group) {
+                callback(null,group);
+            } else {
+                sails.log.debug("findByCode group: Error: The code group not exit ! : " + err);
+                callback("Error: The code group not exit ! :" + err, null);
             }
         });
     },
-    join: function(groupUser, callback){
-        GroupUser.create({user:groupUser.user,group:groupUser.group,admin:groupUser.admin}).exec(function(err,groupUser){
-            sails.log.debug(groupUser);
-            if(groupUser){
-                console.log("The request for join group has been register !");
-                callback(false);
-            }else{
-                console.log("The request for join group fail !")
-                callback(true);
+    checkIsAdmin:function(groupUser,callback){
+        GroupUser.findOne({where:{group_id:groupUser.group,user_id:groupUser.user}}).exec(function(err,groupUser){
+            if(groupUser)
+                return callback(null,groupUser.admin)
+            sails.log.debug("checkIsAdmin group: Error: Can't check if user is admin of the group. : "+err);
+            return callback("Error: Can't check if user is admin of the group. : "+err,null);
+        })
+    },
+    checkIfGroupUserExist:function(groupUserModel,callback){
+        GroupUser.find({ where : {group_id: groupUserModel.group,user_id:groupUserModel.user}}).exec(function (err, group){
+            if(group){
+                if(group.length<=0)
+                    return callback(null,false);
+                return callback(null,true);
             }
+            sails.log.debug("checkIfGroupUserExist: Error - Can't check if link exist in the Group_User table : "+err);
+            return callback("Error - Can't check if link exist in the Group_User table : "+err,null);
+        });
+    },
+    updateGroupUser:function(codeGroup,user_admin,email,giveAdmin,callback){
+        GroupService.findByCode(codeGroup,function(err,group){
+            if(err || group === undefined)
+                return callback(err,null);
+            groupUserModel.group = group.id;
+            groupUserModel.user = user_admin;
+            GroupService.checkIsAdmin(groupUserModel,function(err,admin){
+                if(err)
+                    return callback(err,null);
+                if(admin){
+                    User.findOne({email:email}).exec(function(err,user){
+                        if(err || user === undefined){
+                            sails.log.debug("updateGroupUser: Error: The email was not found :"+err);
+                            return callback("Error: The email was not found :"+err,null);
+                        }
+                        GroupUser.findOne({where:{user_id:user.id,group_id:group.id}}).exec(function (err,groupUser){
+                            if(err || groupUser === undefined){
+                                sails.log.debug("updateGroupUser: Error: This user is not associated with this group. : "+err);
+                                return callback("Error: This user is not associated with this group. : "+err,null);
+                            }
+                            groupUser.admin = giveAdmin;
+                            groupUser.validate = true;
+                            groupUser.save(function(err){
+                                if(err){
+                                    sails.log.debug("updateGroupUser: Error: Can't save groupUser. :"+ err);
+                                    return callback("Error: Can't save groupUser. :"+ err,null);
+                                }
+                                sails.log.debug("updateGroupUser: Success: groupUser has been modified !");
+                                console.log(groupUser);
+                                return callback(null,{message:"Success: groupUser has been modified !",groupUser:groupUser});
+                            })
+                        })
+                    })
+                }
+                else{
+                    sails.log.debug("updateGroupUser: Error: User has no right to do this action.")
+                    return callback("Error: User has no right to do this action.",null)
+                }
+            })
         })
-    },*/
-    findByCode:function(code){
-
     },
-    exit: function(code){
-        Group.findBy({code:codeGroup}).populate("id").exec(function(err,wishes){
-            //
+    createGroupUser:function(groupUserModel,callback){
+        // Vérifier que l'entrée n'existe pas déjà dans la table.
+        this.checkIfGroupUserExist(groupUserModel,function(err,exist){
+            if(err)
+                return callback(err,null);
+            if(exist){
+                sails.log.debug("createGroupUser: Error: Link already existing !");
+                return callback("Error: Link already existing !",null)
+            }
+            GroupUser.create({user:groupUserModel.user,group:groupUserModel.group,admin:groupUserModel.admin,validate:groupUserModel.validate}).exec(function(err,groupUser){
+                if(err) {
+                    sails.log.debug("createGroupUser: Error: Can't create GroupUser ! ");
+                    return callback("Error: Can't create GroupUser :" + err, null);
+                }
+                sails.log.debug('createGroupUser: Success: GroupUser was successfully created !!');
+                console.log(groupUser);
+                return callback(null,groupUser);
+            });
         })
     },
-    remove: function(code){
-
+    destroyGroupUserbyGroup: function(group_id,callback){
+        GroupUser.destroy({group_id:group_id}).exec(function(err){
+            if(err) {
+                sails.log.debug("destroyGroupUserbyGroup: Error: The GroupUser couldn't be deleted");
+                return callback("Error: The GroupUser couldn't be deleted" + err);
+            }
+            sails.log.debug("destroyGroupUserbyGroup: Success: The GroupUser was deleted.")
+            return callback(null);
+        })
     },
-    giveRight: function(code,email){
-
-    },
-    giveAccess: function(){
-
+    destroyGroupUserbyUserAndGroup: function(groupUserModel,callback){
+        this.checkIsAdmin(groupUserModel,function(err,admin){
+            if(err)
+                return callback(err,null);
+            if(admin)
+                return callback("Error: Admin can't exit his group ! Please edit the right.",null);
+            GroupUser.destroy({where:{group_id:groupUserModel.group,user_id:groupUserModel.user}}).exec(function(err){
+                if(err) {
+                    sails.log.debug("destroyGroupUserbyUserAndGroup: Error: The GroupUser couldn't be deleted");
+                    return callback("Error: The GroupUser couldn't be deleted" + err,null);
+                }
+                sails.log.debug("destroyGroupUserbyGroup: Success: The GroupUser was deleted.")
+                return callback(null,"Success: The GroupUser was deleted.");
+            })
+        })
     }
 };

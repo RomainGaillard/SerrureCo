@@ -17,10 +17,9 @@ module.exports = {
         },
         locks:{
             collection:'Lock',
-            via:'groups',
-            columnName : 'group_id'
+            via:'groups'
         },
-        groupsUsers:{
+        groupUsers:{
             collection:'GroupUser',
             via:'group'
         }

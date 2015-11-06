@@ -10,12 +10,14 @@ module.exports = {
         user: {
             model:'user',
             via:'id',
+            required:true,
             columnName: 'user_id'
         },
         group:{
             model:'group',
-            via:'code',
-            columnName: 'group_code'
+            via:'id',
+            required:true,
+            columnName: 'group_id'
         },
         validate:{
             type: 'boolean',
