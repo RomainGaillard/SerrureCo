@@ -131,9 +131,13 @@ var AuthController = {
       var flashError = req.flash('error')[0];
 
       if (err && !flashError ) {
-        req.flash('error', 'Error.Passport.Generic');
+        //req.flash('error', 'Error.Passport.Generic');
+        return res.status(401).json({err: err});
+
       } else if (flashError) {
         req.flash('error', flashError);
+        //return res.status(401).json({err: flashError});
+        return res.badRequest()
       }
       req.flash('form', req.body);
 
@@ -155,21 +159,44 @@ var AuthController = {
     }
 
     passport.callback(req, res, function (err, user, challenges, statuses) {
+
+      var action = req.param('action');
+      switch (action) {
+        case 'register':
+          if (err) {
+            if (err.code === 'E_VALIDATION') {
+              if (err.invalidAttributes.email) {
+                return res.status(409).json({err: 'Email already exist'});
+              } else if (err.invalidAttributes.username) {
+                return res.status(409).json({err: 'Username already exist'});
+              } else {
+                return res.status(409).json({err: 'Password too short'});
+              }
+            } else return res.badRequest()
+          }
+          break;
+        case 'disconnect':
+          break;
+        default:
+              if(err){
+                if(err.code === 'badAuthent'){
+                  return res.forbidden('bad login or password')
+                }else return res.badRequest(err)
+              }
+      }
       if (err || !user) {
         return tryAgain(challenges);
       }
 
       req.login(user, function (err) {
         if (err) {
-          console.log(err)
           return tryAgain(err);
         }
-
-        var action = req.param('action');
 
         switch (action) {
           case 'register':
             Passport.findOne({protocol: 'local', user: user.id}, function (err, userPassport) {
+              if(err || !userPassport)
               sails.log.debug(err + '------' + userPassport)
               user['token'] = userPassport.accessToken;
               res.ok(user.toJSON());

@@ -4,7 +4,6 @@
  */
 
 module.exports = {
-    identity: 'lock',
     joinTableNames: {
         keyNFCs: 'locks_keynfcs'
     },
@@ -16,21 +15,26 @@ module.exports = {
         addressMac:{
             type: 'string',
             unique: true,
+            required:true,
             columnName: 'address_mac'
         },
         state:{
-            type: 'boolean'
+            type: 'boolean',
+            defaultsTo:'false'
         },
         hasCamera:{
             type:'boolean',
+            defaultsTo:'false',
             columnName: 'has_camera'
         },
         hasBell:{
             type:'boolean',
+            defaultsTo:'false',
             columnName: 'has_bell'
         },
         hasMicro:{
             type:'boolean',
+            defaultsTo:'false',
             columnName: 'has_micro'
         },
         planning:{
@@ -38,22 +42,20 @@ module.exports = {
         },
         isRegister:{
             type:"boolean",
+            defaultsTo:'false',
             columnName: 'is_register'
         },
         logs:{
             collection: 'log',
             via: 'lock'
-        },
-        keyNFCs:{
-            columnName : 'lock_id',
-            collection:'KeyNFC',
+        },/*
+        users:{
+            collection:'User',
             via: 'locks',
-            dominant: true
-        },
+        },*/
         groups:{
             collection:'Group',
-            via:'locks',
-            columnName : 'lock_id'
+            via:'locks'
         }
     }
 };

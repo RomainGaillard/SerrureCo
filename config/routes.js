@@ -53,26 +53,35 @@ module.exports.routes = {
    * route Group
    ***************************************************************************/
     'get /group':"GroupController.group",
+    'get /group/:code/user':"GroupController.users",
     'post /group/create': "GroupController.create",
-    'post /group/:code/locks/add/:id':"GroupController.addLock",
-    'put /group/edit/:code':"GroupController.edit",
+    'post /group/:code/lock/add/:id':"GroupController.addLock",
+    'post /group/:code/lock/remove/:id':"GroupController.removeLock",
     'post /group/join/:code': "GroupController.join",
     'post /group/askAccess/:code':"GroupController.askAccess",
+
+    'put /group/edit/:code':"GroupController.edit",
     'put /group/giveAccess/:code':"GroupController.giveAccess",
+
     'delete /group/exit/:code':"GroupController.exit",
     'delete /group/exclude/:code':"GroupController.exclude",
     'delete /group/destroy/:code': "GroupController.destroy",
+  /***************************************************************************
+   * route Lock                                                           *
+   ***************************************************************************/
+    'post /lock/create':"LockController.create",
 
 
   /***************************************************************************
   * route KeyNFC                                                             *
+  * default route                                                            *
+  * PUT update http://localhost:1337/keynfc/1?num=12&user_id=12              *
   ***************************************************************************/
   'get /keynfcs/:id/locks': 'KeyNFcController.locks',
+  'get /keyNFC':'KeyNFC.keyNFC',
   
-  'post /keyNFC/create/':'KeyNFC.createkeyNFC',
-  'post /keyNFC/:id':'KeyNFC.find',
-  'put /keyNFC/update/:id':'KeyNFC.updatekeyNFC',
-  'delete /keyNFC/destroy/:id':'KeyNFC.removekeyNFC',
+  'post /keyNFC/404/create/':'KeyNFC.create',
+  'post /keyNFC/:name':'KeyNFC.findByName',
   /**************************************************************************/
 
   //route authentification passport
@@ -87,6 +96,11 @@ module.exports.routes = {
   'get /auth/:provider': 'AuthController.provider',
   'get /auth/:provider/callback': 'AuthController.callback',
   'get /auth/:provider/:action': 'AuthController.callback',
+
+  /***************************************************************************
+  * route User                                                               *
+  ***************************************************************************/
+  'post /user/:email':'UserController.findByEmail',
 
   /***************************************************************************
   *                                                                          *

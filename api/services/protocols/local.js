@@ -158,8 +158,8 @@ exports.login = function (req, identifier, password, next) {
       } else {
         req.flash('error', 'Error.Passport.Username.NotFound');
       }
-
-      return next(null, false);
+      //return next(new Error('badAuth'), false);
+      return next(null , false);
     }
 
     Passport.findOne({
@@ -174,7 +174,8 @@ exports.login = function (req, identifier, password, next) {
 
           if (!res) {
             req.flash('error', 'Error.Passport.Password.Wrong');
-            return next(null, false);
+            //return next(new Error('badAuth'), false);
+            return next(null , false);
           } else {
             return next(null, user);
           }
@@ -182,7 +183,8 @@ exports.login = function (req, identifier, password, next) {
       }
       else {
         req.flash('error', 'Error.Passport.Password.NotSet');
-        return next(null, false);
+        //return next(new Error('passwordNotSet') , false);
+        return next(null , false);
       }
     });
   });

@@ -15,6 +15,7 @@ module.exports = function(req, res, next) {
   if (token) {
     Passport.findOne({accessToken:token})
       .populate('user').exec(function (err, passport){
+          console.log(passport)
       if (err || !passport){
         return res.status(401).json({err: "user should be authenticated"});
       }

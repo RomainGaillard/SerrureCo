@@ -205,7 +205,7 @@ module.exports = {
                     if(err)
                         return res.badRequest("addLock:"+err);
                     if(admin)
-                        return res.redirect("/group/"+group.id+"/locks/add/"+req.param('id'));
+                        return res.redirect("/group/"+group.id+"/lock/add/"+req.param('id'));
                     else{
                         sails.log.debug("addLock: Error: User has no right to do this action.");
                         return res.badRequest("addLock: Error: User has no right to do this action.");
@@ -216,6 +216,57 @@ module.exports = {
                 return res.badRequest("addLock: Error:"+err);
             }
         })
+    },
+    removeLock:function(req,res){
+        var codeGroup = req.param("code");
+        GroupService.findByCode(codeGroup,function(err,group){
+            if(group){
+                groupUserModel.group = group.id;
+                groupUserModel.user = req.passport.user.id;
+                GroupService.checkIsAdmin(groupUserModel,function(err,admin){
+                    if(err)
+                        return res.badRequest("removeLock:"+err);
+                    if(admin)
+                        return res.redirect("/group/"+group.id+"/lock/remove/"+req.param("id"));
+                    else{
+                        sails.log.debg("removeLock: Error: User has no right to do this action.");
+                        return res.badRequest("removeLock: Error: User has no right to do this action.");
+                    }
+                })
+            }
+            sails.log.debug("removeLock: Error: Group not found. :"+err);
+            return res.badRequest("removeLock: Error: Group not found. :"+err);
+        })
+    },
+    users:function(req,res) {
+        var codeGroup = req.param("code");
+        GroupService.findByCode(codeGroup,function(err,group){
+            if(group){
+                User.find().populate("groupUsers",{group:group.id}).exec(function(err,users){
+                    if(users){
+                        sails.log.debug({message: 'Success:',users:users})
+                        return res.ok({message: 'Success:',users:users})
+                    }
+                    sails.log.debug("user Group: Error: "+err);
+                    return res.badRequest("user Group: Error: "+err);
+                })
+            }
+            else{
+                sails.log.debug("user Group: Error: group not found. :"+err)
+                return res.badRequest("user Group: Error: group not found. :"+err);
+            }
+        })
     }
+    /*/,
+    getMyGroups: function(req,res){
+        if(!req.isSocket){
+            return res.json(401,{err:'is not a socket request'});
+        }
+        var userId = req.param('id');
+        // find groups .exec(function(err,groups)
+        Group.subscribe(req, _.pluck(groups,'id'))
+        return res.json(groups)
+    }
+    */
 };
 
