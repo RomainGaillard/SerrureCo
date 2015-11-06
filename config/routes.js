@@ -54,30 +54,32 @@ module.exports.routes = {
    ***************************************************************************/
     'get /group':"GroupController.group",
     'get /group/:code/user':"GroupController.users",
+    'get /group/:code/lock':"GroupController.lock",
+
     'post /group/create': "GroupController.create",
     'post /group/:code/lock/add/:id':"GroupController.addLock",
     'post /group/:code/lock/remove/:id':"GroupController.removeLock",
-    'post /group/join/:code': "GroupController.join",
-    'post /group/askAccess/:code':"GroupController.askAccess",
+    'post /group/:code/join': "GroupController.join",
+    'post /group/:code/askAccess':"GroupController.askAccess",
 
-    'put /group/edit/:code':"GroupController.edit",
-    'put /group/giveAccess/:code':"GroupController.giveAccess",
+    'put /group/:code/edit':"GroupController.edit",
+    'put /group/:code/giveAccess':"GroupController.giveAccess",
 
-    'delete /group/exit/:code':"GroupController.exit",
-    'delete /group/exclude/:code':"GroupController.exclude",
-    'delete /group/destroy/:code': "GroupController.destroy",
+    'delete /group/:code/exit':"GroupController.exit",
+    'delete /group/:code/exclude':"GroupController.exclude",
+    'delete /group/:code/destroy': "GroupController.destroy",
+
   /***************************************************************************
    * route Lock                                                           *
    ***************************************************************************/
     'post /lock/create':"LockController.create",
-
 
   /***************************************************************************
   * route KeyNFC                                                             *
   * default route                                                            *
   * PUT update http://localhost:1337/keynfc/1?num=12&user_id=12              *
   ***************************************************************************/
-  'get /keynfcs/:id/locks': 'KeyNFcController.locks',
+  //'get /keyNFC/:id/locks': 'KeyNFC.locks',
   'get /keyNFC':'KeyNFC.keyNFC',
   
   'post /keyNFC/404/create/':'KeyNFC.create',

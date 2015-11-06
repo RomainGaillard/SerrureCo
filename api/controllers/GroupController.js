@@ -256,6 +256,28 @@ module.exports = {
                 return res.badRequest("user Group: Error: group not found. :"+err);
             }
         })
+    },
+    lock:function(req,res){
+        var codeGroup = req.param("code");
+        GroupService.findByCode(codeGroup,function(err,group){
+            if(group)
+            {
+                // VERIF VALIDATE USER in GROUP !!!!!
+
+                Lock.find().populate('groups',{group_locks:group.id}).exec(function(err,lock){
+                    if(group){
+                        sails.log.debug("lock Group: Success: "+lock);
+                        return res.ok(lock);
+                    }
+                    sails.log.debug("lock Group: Error:"+err);
+                    return res.badRequest("lock Group: Error:"+err);
+                })
+            }
+            else{
+                sails.log.debug("lock Group: Error: "+err);
+                return res.badRequest("lock: Error: "+err)
+            }
+        })
     }
     /*/,
     getMyGroups: function(req,res){
@@ -269,4 +291,3 @@ module.exports = {
     }
     */
 };
-

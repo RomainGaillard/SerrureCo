@@ -19,7 +19,7 @@ module.exports = {
     checkIsAdmin:function(groupUser,callback){
         GroupUser.findOne({where:{group_id:groupUser.group,user_id:groupUser.user}}).exec(function(err,groupUser){
             if(groupUser)
-                return callback(null,groupUser.admin)
+                return callback(null, groupUser.admin)
             sails.log.debug("checkIsAdmin group: Error: Can't check if user is admin of the group. : "+err);
             return callback("Error: Can't check if user is admin of the group. : "+err,null);
         })
@@ -77,7 +77,7 @@ module.exports = {
         })
     },
     createGroupUser:function(groupUserModel,callback){
-        // Vérifier que l'entrée n'existe pas déjà dans la table.
+        // Vï¿½rifier que l'entrï¿½e n'existe pas dï¿½jï¿½ dans la table.
         this.checkIfGroupUserExist(groupUserModel,function(err,exist){
             if(err)
                 return callback(err,null);
