@@ -13,11 +13,11 @@ module.exports = {
           required: true
       },
       lock:{
-          model: 'lock',
+          model: 'Lock',
           columnName: 'lock_id'
       },
       user:{
-          model: 'user',
+          model: 'User',
           columnName: 'user_id'
       }
   },
