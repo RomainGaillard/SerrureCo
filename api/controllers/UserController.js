@@ -9,7 +9,7 @@ var passportModel = require('../models/Passport');
 module.exports = {
 
     update: function(req,res) {
-       /* var name = req.param('firstname');
+        var name = req.param('firstname');
         var lastname = req.param('lastname');
         var email = req.param('email');
         console.log(req.passport.user)
@@ -50,16 +50,16 @@ module.exports = {
 
         //req.passport.user.update({firstname: name}, {lastname: lastname}, {email: email}).exec(function(err, callback) {
         //    console.log(err)
-        //})*/
+        //})
     },
 
     findByEmail: function (req, res, next) {
         var email = req.param('email');
         User.find({ where: { email: email }, }).exec(function (err, found){
             if (found) {
-                callback(null,found);
+                next(null,found);
             } else {
-                callback(err, null);
+                next(err, null);
             }
         });
         /*var idShortCut = isShortcut(email);
