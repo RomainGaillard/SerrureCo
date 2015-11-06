@@ -42,7 +42,7 @@ module.exports = {
         },
         isRegister:{
             type:"boolean",
-            defaultsTo:'false',
+            defaultsTo:'true',
             columnName: 'is_register'
         },
         logs:{
