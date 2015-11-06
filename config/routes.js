@@ -77,7 +77,7 @@ module.exports.routes = {
   * default route                                                            *
   * PUT update http://localhost:1337/keynfc/1?num=12&user_id=12              *
   ***************************************************************************/
-  'get /keynfcs/:id/locks': 'KeyNFcController.locks',
+  //'get /keynfcs/:id/locks': 'KeyNFcController.locks',
   'get /keyNFC':'KeyNFC.keyNFC',
   
   'post /keyNFC/404/create/':'KeyNFC.create',
