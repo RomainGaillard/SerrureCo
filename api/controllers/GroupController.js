@@ -32,7 +32,7 @@ module.exports = {
                 GroupService.createGroupUser(groupUserModel,function(err,groupUser){
                     if(err)
                         return res.badRequest("create Group: "+err);
-                    return res.status(203).json({created:group,groupUser:groupUser});
+                    return res.status(201).json({created:group,groupUser:groupUser});
                 })
 
             });
@@ -74,7 +74,7 @@ module.exports = {
         });
     },
     destroy: function(req,res){
-        // Vérifier que c'est bien l'admin du groupe !
+        // Vï¿½rifier que c'est bien l'admin du groupe !
         var codeGroup = req.param("code");
         GroupService.findByCode(codeGroup,function(err,group){
             if(err || group === undefined)
@@ -107,7 +107,7 @@ module.exports = {
     },
     askAccess: function(req,res){
         var codeGroup = req.param('code');
-        // Récupérer l'id du groupe en fonction de son code.
+        // Rï¿½cupï¿½rer l'id du groupe en fonction de son code.
         GroupService.findByCode(codeGroup,function(err,group){
             if(err || group === undefined)
                 return res.badRequest("askAccess group: "+ err);

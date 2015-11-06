@@ -44,9 +44,9 @@ module.exports.routes = {
   /***************************************************************************
    * route Logs                                                           *
    ***************************************************************************/
-    'get /locks/:id/logs': 'LogController.logsByLock',
-    'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
-    'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
+    'get /lock/:id/log': 'LogController.logsByLock',
+    'post /lock/:id/log/date': 'LogController.logsByLockAndDate',
+    'post /lock/:id/log/dualdate': 'LogController.logsByLockAndDualDate',
     'post /log/create': 'LogController.addLog',
 
   /***************************************************************************
