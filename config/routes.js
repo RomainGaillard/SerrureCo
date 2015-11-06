@@ -44,9 +44,9 @@ module.exports.routes = {
   /***************************************************************************
    * route Logs                                                           *
    ***************************************************************************/
-    'get /locks/:id/logs': 'LogController.logsByLock',
-    'get /locks/:id/logs/:date': 'LogController.logsByLockAndDate',
-    'get /locks/:id/logs/:start&:end': 'LogController.logsByLockAndDualDate',
+    'get /lock/:id/log': 'LogController.logsByLock',
+    'post /lock/:id/log/date': 'LogController.logsByLockAndDate',
+    'post /lock/:id/log/dualdate': 'LogController.logsByLockAndDualDate',
     'post /log/create': 'LogController.addLog',
 
   /***************************************************************************
@@ -79,7 +79,9 @@ module.exports.routes = {
   * default route                                                            *
   * PUT update http://localhost:1337/keynfc/1?num=12&user_id=12              *
   ***************************************************************************/
+
   //'get /keyNFC/:id/locks': 'KeyNFC.locks',
+
   'get /keyNFC':'KeyNFC.keyNFC',
   
   'post /keyNFC/404/create/':'KeyNFC.create',

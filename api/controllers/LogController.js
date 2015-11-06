@@ -4,21 +4,21 @@
  * @description :: Server-side logic for managing logs
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-var logService = require('../services/LogService.js');
 var log = require('../models/Log.js');
 var lock = require('../models/Lock.js');
-var user = require('../models/User.js');
-
 module.exports = {
     /**
      * @description :: Retourne un json avec les logs correspondant à la serrure passé en paramètre
+     *
+     * @API = {
+     *      int lock
+     *      authorization
+     * }
      */
     logsByLock: function (req, res) {
-        console.log('here');
-        lock.id = req.param('id')
-        LogService.findByLock(lock, function(err, logs){
+        LogService.findByLock(req.param('id'), function(err, logs){
             if(err){
-                res.notFound()
+                res.badRequest()
             }
             else{
                 res.ok(logs);
@@ -28,47 +28,64 @@ module.exports = {
     /**
      * @description :: Retourne un json avec les logs correspondant à la serrure fourni
      * en paramètre selon un jour choisi
+     *
+     * @API = {
+     *      int lock
+     *      Date date
+     *      authorization
+     * }
      */
     logsByLockAndDate: function (req, res) {
-        logs = logService.FindByLockAndDate(
-            req.param('lock'),
-            req.param('date')
+        LogService.findByLockAndDate(
+            req.param('id'),
+            req.param('date'),
+            function(err, logs){
+                if(err){
+                    res.badRequest()
+                }
+                else{
+                    res.ok(logs);
+                }
+            }
         );
-        if (logs) {
-            return res.json(logs, 200)
-        } else {
-            return res.notFound()
-        }
     },
     /**
      * @description :: Retourne un json avec les logs correspondant à la serrure fourni en paramètre
      * selon l'interval de date
      */
     logsByLockAndDualDate: function (req, res) {
-        logs = logService.FindByLockAndDualDate(
-            req.param('lock'),
+        logs = LogService.findByLockAndDualDate(
+            req.param('id'),
             req.param('start'),
-            req.param('end')
+            req.param('end'),
+            function(err, logs){
+                if(err){
+                    res.badRequest()
+                }
+                else{
+                    res.ok(logs);
+                }
+            }
         );
-
-        if (logs) {
-            return res.json(logs, 200)
-        } else {
-            return res.notFound()
-        }
     },
+    /**
+     * @API = {
+     *      string message
+     *      int lock
+     *      authorization
+     * }
+     */
     addLog: function(req, res) {
         log.message = req.param('message');
         lock.id = req.param('lock');
         log.lock = lock;
-        user.id = req.param('user');
-        log.user = user;
-        LogService.create(log, function(err){
-            if(err){
-                return res.badRequest;
+        log.user = req.passport.id;
+        LogService.create(log, function(isCreated){
+            if(!isCreated){
+                return res.badRequest();
             }
             else{
-                return res.ok();
+                res.status(201).json('Log was successfully created !');
             }
         });
     }

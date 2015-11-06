@@ -32,7 +32,7 @@ module.exports = {
                 GroupService.createGroupUser(groupUserModel,function(err,groupUser){
                     if(err)
                         return res.badRequest("create Group: "+err);
-                    return res.status(203).json({created:group,groupUser:groupUser});
+                    return res.status(201).json({created:group,groupUser:groupUser});
                 })
 
             });
