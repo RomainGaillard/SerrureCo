@@ -12,18 +12,32 @@ module.exports = function(req, res, next) {
   // User is allowed, proceed to the next policy, 
   // or if this is the last policy, the controller
   var token = req.headers.authorization || false;
-  if (token) {
+  if (req.isSocket && req.param('token')) {
+    console.log('issocket');
+    Passport.findOne({accessToken:req.param('token')})
+        .populate('user').exec(function (err, passport){
+          console.log(passport);
+          if (err || !passport){
+            return res.status(401).json({err: "user should be authenticated"});
+          }
+          req.passport = passport;
+          req.accessToken = token;
+          next();
+        })
+  }else if (token){
+    console.log('ishttprequest');
     Passport.findOne({accessToken:token})
-      .populate('user').exec(function (err, passport){
-          console.log(passport)
-      if (err || !passport){
-        return res.status(401).json({err: "user should be authenticated"});
-      }
-      req.passport = passport;
-      req.accessToken = token;
-      next();
-    })
-  }else {
+        .populate('user').exec(function (err, passport){
+          console.log(passport);
+          if (err || !passport){
+            return res.status(401).json({err: "user should be authenticated"});
+          }
+          req.passport = passport;
+          req.accessToken = token;
+          next();
+        })
+  }
+  else {
     return res.status(401).json({err: "user should be authenticated"} )
   }
 

@@ -189,7 +189,12 @@ module.exports = {
         GroupUser.find({user:req.passport.user.id}).populate('group').exec(function(err,group){
             if(group){
                 sails.log.debug("group: Success: "+group);
-                return res.ok(group);
+                if(req.isSocket){
+                    Group.subscribe(req, _.pluck(group,'id'))
+                    return res.json(group)
+                }
+                else
+                    return res.ok(group);
             }
             sails.log.debug("group: Error:"+err);
             return res.badRequest("group: Error:"+err);
