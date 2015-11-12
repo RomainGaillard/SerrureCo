@@ -264,7 +264,6 @@ module.exports = {
         GroupService.findByCode(codeGroup, function(err,group){
             if(group)
             {
-                //VALIDATE
                 for(var i =0; i < group.groupUsers.length; i++ )
                 {
                     if (group.groupUsers[i].user == userId)
@@ -274,13 +273,36 @@ module.exports = {
                     }
                 }
 
-                Lock.find().populate('groups',{group_locks:group.id}).exec(function(err,lock){
+                Lock.find().populate('groups').exec(function(err,lock){
                     if(lock){
+                        var index = 0;
+                        while(index < lock.length) {
+                            if(lock[index].groups != "")
+                            {
+                                for (var j = 0; j < lock[index].groups.length; j++)
+                                {
+                                    if (lock[index].groups[j].id != group.id)
+                                    {
+                                        lock[index].groups.splice(j);
+                                    }
+                                }
+                            }
+
+                            if (lock[index].groups == "") {
+                                lock.splice(index);
+                            } else
+                            {
+                                index++;
+                            }
+                        }
+
+
                         sails.log.debug("lock Group: Success: "+lock);
                         return res.ok(lock);
                     }
                     sails.log.debug("lock Group: Error:"+err);
                     return res.badRequest("lock Group: Error:"+err);
+
                 })
             }
             else{
