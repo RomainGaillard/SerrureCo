@@ -7,12 +7,12 @@ var groupUserModel = require('../models/GroupUser.js');
 module.exports = {
 
     findByCode:function(code,callback){
-        Group.findOne({ where: { code: code }}).exec(function (err, group){
+        Group.findOne({ where: { code: code }}).populate('groupUsers').exec(function (err, group){
             if (group) {
                 callback(null,group);
             } else {
-                sails.log.debug("findByCode group: Error: The code group not exit ! : " + err);
-                callback("Error: The code group not exit ! :" + err, null);
+                sails.log.debug("findByCode group: Error: The code group not exist ! : " + err);
+                callback("Error: The code group not exist ! :" + err, null);
             }
         });
     },

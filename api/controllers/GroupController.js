@@ -257,15 +257,25 @@ module.exports = {
             }
         })
     },
+
     lock:function(req,res){
         var codeGroup = req.param("code");
-        GroupService.findByCode(codeGroup,function(err,group){
+        var userId    = req.passport.user.id;
+        GroupService.findByCode(codeGroup, function(err,group){
             if(group)
             {
-                // VERIF VALIDATE USER in GROUP !!!!!
+                //VALIDATE
+                for(var i =0; i < group.groupUsers.length; i++ )
+                {
+                    if (group.groupUsers[i].user == userId)
+                    {
+                        if(!group.groupUsers[i].validate)
+                            return  res.forbidden("Acces denied! You are not validate by the administrateur of the group !");
+                    }
+                }
 
                 Lock.find().populate('groups',{group_locks:group.id}).exec(function(err,lock){
-                    if(group){
+                    if(lock){
                         sails.log.debug("lock Group: Success: "+lock);
                         return res.ok(lock);
                     }
