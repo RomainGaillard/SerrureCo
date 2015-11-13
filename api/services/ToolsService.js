@@ -18,5 +18,35 @@ module.exports = {
     },
     numberRandom: function(min,max){
         return Math.floor((Math.random() * max) + min);
+    },
+    isValidBoolean: function(res, value)
+    {
+        if (!ToolsService.isEmpty(value)) {
+            if (ToolsService.isBoolean(value)) {
+                return true;
+            } else {
+               return false;
+            }
+        } else {
+            return undefined;
+        }
+    },
+    isEmpty: function(value)
+    {
+        if (value == "" || value == undefined){
+            return true;
+        } else {
+            return false;
+        }
+    },
+    isBoolean: function (value) {
+        value = value.toLowerCase();
+        if(value.toString() == 'true' || value.toString() == 'false') {
+            return true;
+        } else {
+            return false;
+        }
     }
+
+
 };

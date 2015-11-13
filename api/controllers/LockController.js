@@ -86,7 +86,7 @@ module.exports = {
     },
     locks: function(req, res){
         var userId = req.passport.user.id;
-        //Lock de l'user ou ce dernier est admin du groupe et ceci sans avoir de doublon
+        //Locks des groupes de l'user ou ce dernier est admin et ceci sans avoir de doublon
         var request = "SELECT `l`.id, `l`.name, `l`.address_mac, `l`.state, `l`.has_camera, `l`.has_bell,`l`.has_micro,`l`.is_register " +
             "FROM `lock` `l` " +
             "INNER JOIN `group_locks__lock_groups` `GL` ON `l`.id=`GL`.lock_groups " +
@@ -101,18 +101,59 @@ module.exports = {
                 console.log(err);
             }
         })
-        //Group.find().populate('locks').populate('groupUsers').where({user:userId, admin: true}).exec(function(err,groups){
-        //    if (groups) {
-        //        res.ok(groups);
-        //    } else {
-        //        res.badRequest(err);
-        //        console.log(err);
-        //    }
-        //})
     },
     update: function(req, res){
+        Lock.findOne({where:{id:req.param("id")}}).exec(function (err, lock) {
+            if(err) return res.badRequest(err);
+            if(lock) {
 
+                var isValidBool = ToolsService.isValidBoolean(res, req.param("state"))
+                if(isValidBool) {
+                    lock.state = req.param("state");
+                } else if (isValidBool== false) {
+                    return res.badRequest("bad type for state !");
+                }
+                isValidBool = ToolsService.isValidBoolean(res, req.param("camera"))
+                if(isValidBool) {
+                    lock.hasCamera = req.param("camera");
+                } else if (isValidBool == false) {
+                    return res.badRequest("bad type for camera  !");
+                }
+                isValidBool = ToolsService.isValidBoolean(res, req.param("bell"))
+                if(isValidBool) {
+                    lock.hasBell = req.param("bell");
+                } else if (isValidBool == false) {
+                    return res.badRequest("bad type for bell  !");
+                }
+                isValidBool = ToolsService.isValidBoolean(res, req.param("micro"))
+                if(isValidBool) {
+                    lock.hasMicro = req.param("micro");
+                } else if(isValidBool == false) {
+                    return res.badRequest("bad type for micro  !");
+                }
+                isValidBool = ToolsService.isValidBoolean(res, req.param("register"))
+                if(isValidBool) {
+                    lock.isRegister = req.param("register");
+                } else if (isValidBool == false) {
+                    return res.badRequest("bad type for register  !");
+                }
+
+                if(!ToolsService.isEmpty(req.param("address"))) {
+                    lock.addressMac = req.param("address");
+                }
+
+                lock.save(function(err) {
+                    if(err) {
+                        console.log("save----" + err)
+                        return res.send(err.status, err);
+                    }
+                    return res.send(200, lock);
+                });
+            }
+            else {
+                return res.badRequest("Lock not exist");
+            }
+        });
     }
-
 };
 

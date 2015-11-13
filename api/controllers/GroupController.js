@@ -296,7 +296,9 @@ module.exports = {
                             return  res.forbidden("Acces denied! You are not validate by the administrateur of the group !");
                     }
                 }
-                var request = "SELECT * FROM `lock` INNER JOIN `group_locks__lock_groups` `lg` ON `lock`.`id` = `lg`.`lock_groups` WHERE `group_locks`="+group.id;
+                var request = "SELECT * FROM `lock` " +
+                    "INNER JOIN `group_locks__lock_groups` `lg` ON `lock`.`id` = `lg`.`lock_groups` " +
+                    "WHERE `group_locks`="+group.id;
                 Lock.query(request, function(err,lock){
                     if(lock){
                         sails.log.debug("lock Group: Success: "+lock);
