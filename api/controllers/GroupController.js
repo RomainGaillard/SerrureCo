@@ -189,7 +189,12 @@ module.exports = {
         GroupUser.find({user:req.passport.user.id}).populate('group').exec(function(err,group){
             if(group){
                 sails.log.debug("group: Success: "+group);
-                return res.ok(group);
+                if(req.isSocket){
+                    Group.subscribe(req, _.pluck(group,'id'))
+                    return res.json(group)
+                }
+                else
+                    return res.ok(group);
             }
             sails.log.debug("group: Error:"+err);
             return res.badRequest("group: Error:"+err);
@@ -283,7 +288,6 @@ module.exports = {
         GroupService.findByCode(codeGroup, function(err,group){
             if(group)
             {
-                //VALIDATE
                 for(var i =0; i < group.groupUsers.length; i++ )
                 {
                     if (group.groupUsers[i].user == userId)
@@ -292,11 +296,16 @@ module.exports = {
                             return  res.forbidden("Acces denied! You are not validate by the administrateur of the group !");
                     }
                 }
-
-                Lock.find().populate('groups',{group_locks:group.id}).exec(function(err,lock){
+                var request = "SELECT * FROM `lock` INNER JOIN `group_locks__lock_groups` `lg` ON `lock`.`id` = `lg`.`lock_groups` WHERE `group_locks`="+group.id;
+                Lock.query(request, function(err,lock){
                     if(lock){
                         sails.log.debug("lock Group: Success: "+lock);
-                        return res.ok(lock);
+                        if(req.isSocket){
+                            Lock.subscribe(req, _.pluck(lock,'id'))
+                            return res.json(lock)
+                        }
+                        else
+                            return res.ok(lock);
                     }
                     sails.log.debug("lock Group: Error:"+err);
                     return res.badRequest("lock Group: Error:"+err);
