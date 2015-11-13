@@ -277,37 +277,14 @@ module.exports = {
                             return  res.forbidden("Acces denied! You are not validate by the administrateur of the group !");
                     }
                 }
-
-                Lock.find().populate('groups').exec(function(err,lock){
+                var request = "SELECT * FROM `lock` INNER JOIN `group_locks__lock_groups` `lg` ON `lock`.`id` = `lg`.`lock_groups` WHERE `group_locks`="+group.id;
+                Lock.query(request, function(err,lock){
                     if(lock){
-                        var index = 0;
-                        while(index < lock.length) {
-                            if(lock[index].groups != "")
-                            {
-                                for (var j = 0; j < lock[index].groups.length; j++)
-                                {
-                                    if (lock[index].groups[j].id != group.id)
-                                    {
-                                        lock[index].groups.splice(j);
-                                    }
-                                }
-                            }
-
-                            if (lock[index].groups == "") {
-                                lock.splice(index);
-                            } else
-                            {
-                                index++;
-                            }
-                        }
-
-
                         sails.log.debug("lock Group: Success: "+lock);
                         return res.ok(lock);
                     }
                     sails.log.debug("lock Group: Error:"+err);
                     return res.badRequest("lock Group: Error:"+err);
-
                 })
             }
             else{
