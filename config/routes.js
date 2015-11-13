@@ -73,6 +73,7 @@ module.exports.routes = {
    * route Lock                                                           *
    ***************************************************************************/
     'post /lock/create':"LockController.create",
+    'get /lock':"LockController.locks",
 
   /***************************************************************************
   * route KeyNFC                                                             *
