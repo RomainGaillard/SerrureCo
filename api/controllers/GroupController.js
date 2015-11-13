@@ -281,7 +281,12 @@ module.exports = {
                 Lock.query(request, function(err,lock){
                     if(lock){
                         sails.log.debug("lock Group: Success: "+lock);
-                        return res.ok(lock);
+                        if(req.isSocket){
+                            Lock.subscribe(req, _.pluck(lock,'id'))
+                            return res.json(lock)
+                        }
+                        else
+                            return res.ok(lock);
                     }
                     sails.log.debug("lock Group: Error:"+err);
                     return res.badRequest("lock Group: Error:"+err);

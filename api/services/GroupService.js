@@ -12,7 +12,7 @@ module.exports = {
                 callback(null,group);
             } else {
                 sails.log.debug("findByCode group: Error: The code group not exist ! : " + err);
-                callback("Error: The code group not exist ! :" + err, null);
+                callback("Error: The code group not exist ! :"+code +" "+ err, null);
             }
         });
     },
