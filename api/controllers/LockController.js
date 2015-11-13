@@ -109,31 +109,31 @@ module.exports = {
 
                 var isValidBool = ToolsService.isValidBoolean(res, req.param("state"))
                 if(isValidBool) {
-                    lock.state = req.param("state");
+                    lock.state = req.param("state").toLowerCase();
                 } else if (isValidBool== false) {
                     return res.badRequest("bad type for state !");
                 }
                 isValidBool = ToolsService.isValidBoolean(res, req.param("camera"))
                 if(isValidBool) {
-                    lock.hasCamera = req.param("camera");
+                    lock.hasCamera = req.param("camera").toLowerCase();
                 } else if (isValidBool == false) {
                     return res.badRequest("bad type for camera  !");
                 }
                 isValidBool = ToolsService.isValidBoolean(res, req.param("bell"))
                 if(isValidBool) {
-                    lock.hasBell = req.param("bell");
+                    lock.hasBell = req.param("bell").toLowerCase();
                 } else if (isValidBool == false) {
                     return res.badRequest("bad type for bell  !");
                 }
                 isValidBool = ToolsService.isValidBoolean(res, req.param("micro"))
                 if(isValidBool) {
-                    lock.hasMicro = req.param("micro");
+                    lock.hasMicro = req.param("micro").toLowerCase();
                 } else if(isValidBool == false) {
                     return res.badRequest("bad type for micro  !");
                 }
                 isValidBool = ToolsService.isValidBoolean(res, req.param("register"))
-                if(isValidBool) {
-                    lock.isRegister = req.param("register");
+                if (isValidBool) {
+                    lock.isRegister = req.param("register").toLowerCase();
                 } else if (isValidBool == false) {
                     return res.badRequest("bad type for register  !");
                 }
