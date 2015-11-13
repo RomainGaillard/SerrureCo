@@ -83,6 +83,36 @@ module.exports = {
             }
         }
         addGroupAtLock();
+    },
+    locks: function(req, res){
+        var userId = req.passport.user.id;
+        //Lock de l'user ou ce dernier est admin du groupe et ceci sans avoir de doublon
+        var request = "SELECT `l`.id, `l`.name, `l`.address_mac, `l`.state, `l`.has_camera, `l`.has_bell,`l`.has_micro,`l`.is_register " +
+            "FROM `lock` `l` " +
+            "INNER JOIN `group_locks__lock_groups` `GL` ON `l`.id=`GL`.lock_groups " +
+            "INNER JOIN `group` ON `GL`.group_locks=`group`.id " +
+            "INNER JOIN `group_user` `GU` ON `group`.id=`GU`.group_id " +
+            "WHERE `GU`.user_id = "+userId+" AND `GU`.admin = true GROUP BY `l`.id";
+        Lock.query(request, function(err,locks){
+            if (locks) {
+                res.ok(locks);
+            } else {
+                res.badRequest(err);
+                console.log(err);
+            }
+        })
+        //Group.find().populate('locks').populate('groupUsers').where({user:userId, admin: true}).exec(function(err,groups){
+        //    if (groups) {
+        //        res.ok(groups);
+        //    } else {
+        //        res.badRequest(err);
+        //        console.log(err);
+        //    }
+        //})
+    },
+    update: function(req, res){
+
     }
+
 };
 
