@@ -68,7 +68,7 @@ module.exports = {
                 }
                 else{
                     sails.log.debug("join group: Error: User has no right to do this action.");
-                    return res.badRequest("join group: Error: User has no right to do this action.");
+                    return res.forbidden("join group: Error: User has no right to do this action.");
                 }
             })
         });
@@ -93,14 +93,34 @@ module.exports = {
                         sails.log.debug("destroy group: Success: The group was deleted.");
                         GroupService.destroyGroupUserbyGroup(groupUserModel.group,function(err){
                             if(err)
-                                return res.basRequest("destroy group: "+err);
-                            return res.ok("destroy group: Success: The Group and the GroupUser was deleted.")
+                                return res.badRequest("destroy group: "+err);
                         })
                     });
+
+                    var j = 0;
+                    for(var i = 0; i < group.locks.length; i++){
+                        Lock.findOne({id:group.locks[i].id}).populate('groups').exec(function(err,lock) {
+                            if (err) {
+                                return res.badRequest;
+                                sails.log.debug(err);
+                            }
+                            if (lock.groups.length == 0){
+                                Lock.destroy({id:lock.id}).exec(function(err) {
+                                    if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
+                                })
+                            }
+                            j++;
+                            // si on est bien passé le bon nombre de fois dans ce callback au dernier coup on a toujours pas eu d'erreur donc on renvoie ok
+                            if(j == group.locks.length) return res.ok();
+                        });
+                    }
+                    // si il n'y a pas de lock dans le groupe
+                    if (group.locks.length == 0) return res.ok();
+
                 }
                 else{
                     sails.log.debug("destroy group: Error: User has no right to do this action.")
-                    return res.badRequest("destroy group: Error: User has no right to do this action.")
+                    return res.forbidden("destroy group: Error: User has no right to do this action.")
                 }
             });
         })
@@ -168,21 +188,38 @@ module.exports = {
     edit:function(req,res){
         var codeGroup = req.param('code');
         var name  = req.param("name");
-        Group.findOne({code:codeGroup}).exec(function(err,group){
-            if(err || group === undefined){
-                sails.log.debug("edit group: Error: The group code not found !");
-                return res.badRequest("edit group: Error: The group code not found ! :"+err);
+        GroupService.findByCode(codeGroup,function(err,group){
+            if(err) {
+                sails.log.debug(err);
+                return res.badRequest(err);
             }
-            group.name = name;
-            group.save(function(err){
-                if(err){
-                    sails.log.debug("edit group: Error: Can't save group. :"+ err);
-                    return res.badRequest("edit group: Error: Can't save group :"+ err);
-                }
-                sails.log.debug("edit group: Success: group has been modified !");
-                console.log(group);
-                return res.ok({message:"edit group: Success: group has been modified !",group:group});
-            })
+            if(group){
+                groupUserModel.group = group.id;
+                groupUserModel.user = req.passport.user.id;
+                GroupService.checkIsAdmin(groupUserModel,function(err,admin){
+                    if(err)
+                        return res.badRequest("addLock:"+err);
+                    if(admin) {
+                        group.name = name;
+                        group.save(function (err) {
+                            if (err) {
+                                sails.log.debug("edit group: Error: Can't save group. :" + err);
+                                return res.badRequest("edit group: Error: Can't save group :" + err);
+                            }
+                            sails.log.debug("edit group: Success: group has been modified !");
+                            console.log(group);
+                            return res.ok({message: "edit group: Success: group has been modified !", group: group});
+                        })
+                    }
+                    else{
+                        sails.log.debug("addLock: Error: User has no right to do this action.");
+                        return res.forbidden("addLock: Error: User has no right to do this action.");
+                    }
+                })
+            }else{
+                sails.log.debug("addLock: Error: No group found");
+                return res.badRequest("addLock: Error: No group found");
+            }
         })
     },
     group:function(req,res){
@@ -201,24 +238,35 @@ module.exports = {
         })
     },
     addLock:function(req,res){
+        console.log("test");
         var codeGroup = req.param("code");
         GroupService.findByCode(codeGroup,function(err,group){
+            if(err) {
+                sails.log.debug(err);
+                return res.badRequest(err);
+            }
             if(group){
                 groupUserModel.group = group.id;
                 groupUserModel.user = req.passport.user.id;
                 GroupService.checkIsAdmin(groupUserModel,function(err,admin){
                     if(err)
                         return res.badRequest("addLock:"+err);
-                    if(admin)
-                        return res.redirect("/group/"+group.id+"/lock/add/"+req.param('id'));
+                    if(admin){
+                        //return res.redirect("/group/"+group.id+"/lock/add/"+req.param('id'));
+                        group.locks.add(req.param("id"));
+                        group.save(function (err) {
+                            if (err) return res.badRequest(err);
+                            return res.ok();
+                        })
+                    }
                     else{
                         sails.log.debug("addLock: Error: User has no right to do this action.");
-                        return res.badRequest("addLock: Error: User has no right to do this action.");
+                        return res.forbidden("addLock: Error: User has no right to do this action.");
                     }
                 })
             }else{
-                sails.log.debug("addLock: Error:"+err);
-                return res.badRequest("addLock: Error:"+err);
+                sails.log.debug("addLock: Error: No group found");
+                return res.badRequest("addLock: Error: No group found");
             }
         })
     },
@@ -241,14 +289,14 @@ module.exports = {
 
                     group.save(function(err){
                         console.log(err);
-                        if (err) return res.send(err.status, err);
+                        if (err) return res.badRequest(err);
                         Lock.findOne({id:req.param("id")}).populate('groups').exec(function(err,lock) {
                             if (err) return res.badRequest;
                             console.log(lock.groups);
                             console.log(lock.groups.length);
                             if (lock.groups.length == 0){
                                 Lock.destroy({id:req.param("id")}).exec(function(err) {
-                                    if (err) return res.badRequest("can't delete lock from the database");
+                                    if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
                                 })
                             }
                             return res.ok();
@@ -257,7 +305,7 @@ module.exports = {
                 }
                 else{
                     sails.log.debug("removeLock: Error: User has no right to do this action.");
-                    return res.badRequest("removeLock: Error: User has no right to do this action.");
+                    return res.forbidden("removeLock: Error: User has no right to do this action.");
                 }
             })
         })

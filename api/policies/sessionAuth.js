@@ -38,6 +38,7 @@ module.exports = function(req, res, next) {
         })
   }
   else {
+    sails.log.debug("token manquant");
     return res.status(401).json({err: "user should be authenticated"} )
   }
 
