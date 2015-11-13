@@ -7,7 +7,7 @@ var groupUserModel = require('../models/GroupUser.js');
 module.exports = {
 
     findByCode:function(code,callback){
-        Group.findOne({ where: { code: code }}).populate('groupUsers').exec(function (err, group){
+        Group.findOne({ where: { code: code }}).populate('groupUsers').populate('locks').exec(function (err, group){
             if (group) {
                 callback(null,group);
             } else {

@@ -93,10 +93,34 @@ module.exports = {
                         sails.log.debug("destroy group: Success: The group was deleted.");
                         GroupService.destroyGroupUserbyGroup(groupUserModel.group,function(err){
                             if(err)
-                                return res.basRequest("destroy group: "+err);
-                            return res.ok("destroy group: Success: The Group and the GroupUser was deleted.")
+                                return res.badRequest("destroy group: "+err);
+                            //return res.ok("destroy group: Success: The Group and the GroupUser was deleted.")
                         })
                     });
+
+                    var j = 0;
+                    for(var i = 0; i < group.locks.length; i++){
+                        console.log(group.locks[i].id);
+                        Lock.findOne({id:group.locks[i].id}).populate('groups').exec(function(err,lock) {
+                            if (err) return res.badRequest;
+                            console.log(lock.groups);
+                            console.log(lock.groups.length);
+                            console.log(lock.id);
+                            if (lock.groups.length == 0){
+                                Lock.destroy({id:lock.id}).exec(function(err) {
+                                    console.log("i'm là");
+                                    if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
+                                })
+                            }
+                            j++;
+                            console.log(j);
+                            // si on est bien passé le bon nombre de fois dans ce callback au dernier coup on a toujours pas eu d'erreur donc on renvoie ok
+                            if(j == group.locks.length) return res.ok();
+                        });
+                    }
+                    // si il n'y a pas de lock dans le groupe
+                    if (group.locks.length == 0) return res.ok();
+
                 }
                 else{
                     sails.log.debug("destroy group: Error: User has no right to do this action.")
@@ -201,6 +225,7 @@ module.exports = {
         })
     },
     addLock:function(req,res){
+        console.log("test");
         var codeGroup = req.param("code");
         GroupService.findByCode(codeGroup,function(err,group){
             if(group){
@@ -248,7 +273,7 @@ module.exports = {
                             console.log(lock.groups.length);
                             if (lock.groups.length == 0){
                                 Lock.destroy({id:req.param("id")}).exec(function(err) {
-                                    if (err) return res.badRequest("can't delete lock from the database");
+                                    if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
                                 })
                             }
                             return res.ok();
