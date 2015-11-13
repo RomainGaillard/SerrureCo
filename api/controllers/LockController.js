@@ -92,7 +92,7 @@ module.exports = {
             "INNER JOIN `group_locks__lock_groups` `GL` ON `l`.id=`GL`.lock_groups " +
             "INNER JOIN `group` ON `GL`.group_locks=`group`.id " +
             "INNER JOIN `group_user` `GU` ON `group`.id=`GU`.group_id " +
-            "WHERE `GU`.user_id = "+userId+" AND `GU`.admin = true";
+            "WHERE `GU`.user_id = "+userId+" AND `GU`.admin = true GROUP BY `l`.id";
         Lock.query(request, function(err,locks){
             if (locks) {
                 res.ok(locks);
