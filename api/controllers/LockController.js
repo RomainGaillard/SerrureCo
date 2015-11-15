@@ -15,19 +15,19 @@ var GroupUserModel = require('../models/GroupUser.js');
 module.exports = {
     create: function(req,res){
         LockModel.name = req.param("name");
-        LockModel.addressMac = req.param("addressMac");
+        LockModel.address_mac = req.param("address_mac");
         LockModel.state = req.param("state");
-        LockModel.hasCamera = req.param("hasCamera");
-        LockModel.hasBell = req.param("hasBell");
-        LockModel.hasMicro = req.param("hasMicro");
+        LockModel.has_camera = req.param("has_camera");
+        LockModel.has_bell = req.param("has_bell");
+        LockModel.has_micro = req.param("has_micro");
         LockModel.planning = req.param("planning");
-        LockModel.isRegister = req.param("isRegister");
+        LockModel.is_register = req.param("is_register");
         var groups = req.param('groups');
         LockModel.groups;
 
         var createLock = function(){
-            Lock.create({name:LockModel.name,addressMac:LockModel.addressMac,state:LockModel.state,hasCamera:LockModel.hasCamera,
-                hasBell:LockModel.hasBell,hasMicro:LockModel.hasMicro,planning:LockModel.planning,isRegister:LockModel.isRegister,groups:LockModel.groups}).exec(function(err,lock){
+            Lock.create({name:LockModel.name,address_mac:LockModel.address_mac,state:LockModel.state,has_camera:LockModel.has_camera,
+                has_bell:LockModel.has_bell,has_micro:LockModel.has_micro,planning:LockModel.planning,is_register:LockModel.is_register,groups:LockModel.groups}).exec(function(err,lock){
                 if(lock){
                     sails.log.debug("create Lock: Success: "+lock);
                     return res.ok({message:"create Lock: Success !",lock:lock});
