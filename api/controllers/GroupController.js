@@ -238,7 +238,6 @@ module.exports = {
         })
     },
     addLock:function(req,res){
-        console.log("test");
         var codeGroup = req.param("code");
         GroupService.findByCode(codeGroup,function(err,group){
             if(err) {
