@@ -353,7 +353,7 @@ module.exports = {
                     "WHERE `group_locks`="+group.id;
                 Lock.query(request, function(err,lock){
                     if(lock){
-                        sails.log.debug("lock Group: Success: "+lock);
+                        sails.log.debug({msg:"lock Group: Success: ",lock:lock});
                         if(req.isSocket){
                             Lock.subscribe(req, _.pluck(lock,'id'))
                             return res.json(lock)
