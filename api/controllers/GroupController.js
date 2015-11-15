@@ -283,7 +283,6 @@ module.exports = {
                     return res.badRequest("removeLock:" + err);
                 }
                 if(admin){
-                    console.log(group.locks);
                     group.locks.remove(req.param("id"));
 
                     group.save(function(err){
@@ -291,14 +290,20 @@ module.exports = {
                         if (err) return res.badRequest(err);
                         Lock.findOne({id:req.param("id")}).populate('groups').exec(function(err,lock) {
                             if (err) return res.badRequest;
-                            console.log(lock.groups);
-                            console.log(lock.groups.length);
-                            if (lock.groups.length == 0){
-                                Lock.destroy({id:req.param("id")}).exec(function(err) {
-                                    if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
-                                })
+                            if(lock){
+                                if (lock.groups.length == 0){
+                                    Lock.destroy({id:req.param("id")}).exec(function(err) {
+                                        if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
+                                    })
+                                }
+                                return res.ok();
                             }
-                            return res.ok();
+                            else{
+                                sails.log.debug("removeLock: Error: Can't find lock id"+req.param("id"));
+                                return res.badRequest("Can't find lock id ! ");
+                            }
+
+
                         });
                     });
                 }
