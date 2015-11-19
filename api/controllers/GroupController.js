@@ -318,14 +318,42 @@ module.exports = {
         var codeGroup = req.param("code");
         GroupService.findByCode(codeGroup,function(err,group){
             if(group){
+                sails.log.debug("---------------------------------------------------------------", group.id);
+
+                var request = "SELECT `user_id` FROM `group_user` WHERE `group_id` ="+group.id;
+                    GroupUser.query(request, function(err, results) {
+                    if (err) return res.serverError(err);
+                    //return res.ok(results.rows);
+                    var j = 0;
+                    var tabUser = [];
+                        for(var i = 0; i < results.length; i++){
+                            User.findOne({id:results[i].user_id}).exec(function(err, user){
+                                if (err) {
+                                    return res.badRequest;
+                                    sails.log.debug(err);
+                                }
+                                if(user){
+                                    tabUser.push(user);
+                                }
+                                j++;
+                                if(j == results.length){
+                                    sails.log.debug(tabUser)
+                                    return res.ok(tabUser);
+                                }
+                            });
+                        }
+                        if (results.length == 0) return res.ok(); 
+                    });
+                
+/************************************************************************************************
                 User.find().populate("groupUsers",{group:group.id}).exec(function(err,users){
-                    if(users){
-                        sails.log.debug({message: 'Success:',users:users})
+                                        if(users){
+                        //sails.log.debug({message: 'Success:',users:users})
                         return res.ok({message: 'Success:',users:users})
                     }
                     sails.log.debug("user Group: Error: "+err);
                     return res.badRequest("user Group: Error: "+err);
-                })
+                })************************************************************************************/
             }
             else{
                 sails.log.debug("user Group: Error: group not found. :"+err)
