@@ -129,12 +129,14 @@ module.exports = {
     },
     askAccess: function(req,res){
         var codeGroup = req.param('code');
-        // R�cup�rer l'id du groupe en fonction de son code.
+        // Récupérer l'id du groupe en fonction de son code.
         GroupService.findByCode(codeGroup,function(err,group){
             if(err || group === undefined)
                 return res.badRequest("askAccess group: "+ err);
             groupUserModel.group = group.id;
             groupUserModel.user = req.passport.user.id;
+            groupUserModel.validate = false;
+            groupUserModel.admin = false;
             GroupService.createGroupUser(groupUserModel,function(err,groupUser){
                 if(err)
                     return res.badRequest("askAccess group: Error: The request for join group fail !" + err);
