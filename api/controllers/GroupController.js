@@ -74,7 +74,7 @@ module.exports = {
         });
     },
     destroy: function(req,res){
-        // V�rifier que c'est bien l'admin du groupe !
+        // Vérifier que c'est bien l'admin du groupe !
         var codeGroup = req.param("code");
         GroupService.findByCode(codeGroup,function(err,group){
             if(err || group === undefined)
@@ -90,7 +90,9 @@ module.exports = {
                             sails.log.debug("destroy group: Error: The group can't be deleted. :" + err);
                             return res.badRequest("destroy group: Error: The group can't be deleted. :" + err);
                         }
-                        sails.log.debug("destroy group: Success: The group was deleted.");
+                        sails.log.debug("destroy group: Success: The group was deleted.")
+                        Group.publishDestroy(group.id)
+
                         GroupService.destroyGroupUserbyGroup(groupUserModel.group,function(err){
                             if(err)
                                 return res.badRequest("destroy group: "+err);
@@ -227,7 +229,10 @@ module.exports = {
             if(group){
                 sails.log.debug("group: Success: "+group);
                 if(req.isSocket){
-                    Group.subscribe(req, _.pluck(group,'id'))
+                    for(var i=0;i<group.length;i++){
+                        Group.subscribe(req, group[i].group.id)
+                    }
+                    //Group.subscribe(req, _.pluck(group,'group_id'))
                     return res.json(group)
                 }
                 else
@@ -356,6 +361,7 @@ module.exports = {
                     if(lock){
                         sails.log.debug({msg:"lock Group: Success: ",lock:lock});
                         if(req.isSocket){
+                            sails.log.debug(lock.id);
                             Lock.subscribe(req, _.pluck(lock,'id'))
                             return res.json(lock)
                         }
@@ -372,15 +378,5 @@ module.exports = {
             }
         })
     }
-    /*/,
-    getMyGroups: function(req,res){
-        if(!req.isSocket){
-            return res.json(401,{err:'is not a socket request'});
-        }
-        var userId = req.param('id');
-        // find groups .exec(function(err,groups)
-        Group.subscribe(req, _.pluck(groups,'id'))
-        return res.json(groups)
-    }
-    */
+
 };

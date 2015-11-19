@@ -107,39 +107,32 @@ module.exports = {
             if(err) return res.badRequest(err);
             if(lock) {
 
-                var isValidBool = ToolsService.isValidBoolean(res, req.param("state"))
-                if(isValidBool) {
-                    lock.state = req.param("state").toLowerCase();
-                } else if (isValidBool== false) {
-                    return res.badRequest("bad type for state !");
-                }
-                isValidBool = ToolsService.isValidBoolean(res, req.param("camera"))
-                if(isValidBool) {
-                    lock.hasCamera = req.param("camera").toLowerCase();
-                } else if (isValidBool == false) {
-                    return res.badRequest("bad type for camera  !");
-                }
-                isValidBool = ToolsService.isValidBoolean(res, req.param("bell"))
-                if(isValidBool) {
-                    lock.hasBell = req.param("bell").toLowerCase();
-                } else if (isValidBool == false) {
-                    return res.badRequest("bad type for bell  !");
-                }
-                isValidBool = ToolsService.isValidBoolean(res, req.param("micro"))
-                if(isValidBool) {
-                    lock.hasMicro = req.param("micro").toLowerCase();
-                } else if(isValidBool == false) {
-                    return res.badRequest("bad type for micro  !");
-                }
-                isValidBool = ToolsService.isValidBoolean(res, req.param("register"))
-                if (isValidBool) {
-                    lock.isRegister = req.param("register").toLowerCase();
-                } else if (isValidBool == false) {
-                    return res.badRequest("bad type for register  !");
+                if(req.param("state") != null){
+                    sails.log.debug(req.param("state"));
+                    sails.log.debug(ToolsService.getBoolean(req.param("state")))
+                    lock.state = ToolsService.getBoolean(req.param("state"));
                 }
 
-                if(!ToolsService.isEmpty(req.param("address"))) {
-                    lock.addressMac = req.param("address");
+                if(req.param("has_camera") != null){
+                    lock.has_camera = ToolsService.getBoolean(req.param("has_camera"));
+                }
+
+                if(req.param("has_bell") != null){
+                    lock.has_bell = ToolsService.getBoolean(req.param("has_bell"));
+                }
+
+                if(req.param("has_micro") != null){
+                    lock.has_micro = ToolsService.getBoolean(req.param("has_micro"));
+                }
+
+                if(req.param("is_register") != null){
+                    lock.is_register = ToolsService.getBoolean(req.param("is_register"));
+                }
+
+                if(req.param("address_mac") != null){
+                    if(!ToolsService.isEmpty(req.param("address_mac"))) {
+                        lock.address_mac = req.param("address_mac");
+                    }
                 }
 
                 lock.save(function(err) {
@@ -147,6 +140,7 @@ module.exports = {
                         console.log("save----" + err)
                         return res.send(err.status, err);
                     }
+                    Lock.publishUpdate(lock.id,{lock:lock})
                     return res.send(200, lock);
                 });
             }

@@ -19,7 +19,7 @@ module.exports = {
     numberRandom: function(min,max){
         return Math.floor((Math.random() * max) + min);
     },
-    isValidBoolean: function(res, value)
+    isValidBoolean: function(value)
     {
         if (!ToolsService.isEmpty(value)) {
             if (ToolsService.isBoolean(value)) {
@@ -40,12 +40,18 @@ module.exports = {
         }
     },
     isBoolean: function (value) {
-        value = value.toLowerCase();
-        if(value.toString() == 'true' || value.toString() == 'false') {
+
+        if (value.toString() == 'true' || value.toString() == 'false') {
             return true;
         } else {
             return false;
         }
+    },
+    getBoolean: function(value){
+        if(value == true || value == 1)
+            return true;
+        else
+            return false;
     }
 
 
