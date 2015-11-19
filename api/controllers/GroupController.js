@@ -344,8 +344,9 @@ module.exports = {
                             return  res.forbidden("Acces denied! You are not validate by the administrateur of the group !");
                     }
                 }
-                var request = "SELECT * FROM `lock` " +
-                    "INNER JOIN `group_locks__lock_groups` `lg` ON `lock`.`id` = `lg`.`lock_groups` " +
+                var request = "SELECT `l`.id, `l`.name, `l`.address_mac, `l`.state, `l`.has_camera, `l`.has_bell,`l`.has_micro,`l`.is_register " +
+                    "FROM `lock` `l` " +
+                    "INNER JOIN `group_locks__lock_groups` `lg` ON `l`.`id` = `lg`.`lock_groups` " +
                     "WHERE `group_locks`="+group.id;
                 Lock.query(request, function(err,lock){
                     if(lock){
