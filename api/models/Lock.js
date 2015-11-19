@@ -12,7 +12,7 @@ module.exports = {
             type: 'string',
             required: true
         },
-        addressMac:{
+        address_mac:{
             type: 'string',
             unique: true,
             required:true,
@@ -22,17 +22,17 @@ module.exports = {
             type: 'boolean',
             defaultsTo:'false'
         },
-        hasCamera:{
+        has_camera:{
             type:'boolean',
             defaultsTo:'false',
             columnName: 'has_camera'
         },
-        hasBell:{
+        has_bell:{
             type:'boolean',
             defaultsTo:'false',
             columnName: 'has_bell'
         },
-        hasMicro:{
+        has_micro:{
             type:'boolean',
             defaultsTo:'false',
             columnName: 'has_micro'
@@ -40,7 +40,7 @@ module.exports = {
         planning:{
             type:'json'
         },
-        isRegister:{
+        is_register:{
             type:"boolean",
             defaultsTo:'true',
             columnName: 'is_register'

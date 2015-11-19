@@ -238,7 +238,6 @@ module.exports = {
         })
     },
     addLock:function(req,res){
-        console.log("test");
         var codeGroup = req.param("code");
         GroupService.findByCode(codeGroup,function(err,group){
             if(err) {
@@ -284,7 +283,6 @@ module.exports = {
                     return res.badRequest("removeLock:" + err);
                 }
                 if(admin){
-                    console.log(group.locks);
                     group.locks.remove(req.param("id"));
 
                     group.save(function(err){
@@ -292,14 +290,20 @@ module.exports = {
                         if (err) return res.badRequest(err);
                         Lock.findOne({id:req.param("id")}).populate('groups').exec(function(err,lock) {
                             if (err) return res.badRequest;
-                            console.log(lock.groups);
-                            console.log(lock.groups.length);
-                            if (lock.groups.length == 0){
-                                Lock.destroy({id:req.param("id")}).exec(function(err) {
-                                    if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
-                                })
+                            if(lock){
+                                if (lock.groups.length == 0){
+                                    Lock.destroy({id:req.param("id")}).exec(function(err) {
+                                        if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
+                                    })
+                                }
+                                return res.ok();
                             }
-                            return res.ok();
+                            else{
+                                sails.log.debug("removeLock: Error: Can't find lock id"+req.param("id"));
+                                return res.badRequest("Can't find lock id ! ");
+                            }
+
+
                         });
                     });
                 }
@@ -350,7 +354,7 @@ module.exports = {
                     "WHERE `group_locks`="+group.id;
                 Lock.query(request, function(err,lock){
                     if(lock){
-                        sails.log.debug("lock Group: Success: "+lock);
+                        sails.log.debug({msg:"lock Group: Success: ",lock:lock});
                         if(req.isSocket){
                             Lock.subscribe(req, _.pluck(lock,'id'))
                             return res.json(lock)
