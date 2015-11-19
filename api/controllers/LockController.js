@@ -29,7 +29,7 @@ module.exports = {
             Lock.create({name:LockModel.name,address_mac:LockModel.address_mac,state:LockModel.state,has_camera:LockModel.has_camera,
                 has_bell:LockModel.has_bell,has_micro:LockModel.has_micro,planning:LockModel.planning,is_register:LockModel.is_register,groups:LockModel.groups}).exec(function(err,lock){
                 if(lock){
-                    sails.log.debug("create Lock: Success: "+lock);
+                    sails.log.debug({message:"create Lock: Success: ",lock:lock});
                     return res.ok({message:"create Lock: Success !",lock:lock});
                 }
                 sails.log.debug("create Lock: Error:"+err);
