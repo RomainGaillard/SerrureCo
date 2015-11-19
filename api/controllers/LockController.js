@@ -14,25 +14,36 @@ var GroupUserModel = require('../models/GroupUser.js');
 
 module.exports = {
     create: function(req,res){
-        LockModel.name = req.param("name");
-        LockModel.address_mac = req.param("address_mac");
-        LockModel.state = req.param("state");
-        LockModel.has_camera = req.param("has_camera");
-        LockModel.has_bell = req.param("has_bell");
-        LockModel.has_micro = req.param("has_micro");
-        LockModel.planning = req.param("planning");
-        LockModel.is_register = req.param("is_register");
-        var groups = req.param('groups');
-        LockModel.groups;
+        if(req.isSocket){
+            LockModel = req.param("lock");
+            var groups = LockModel.groups;
+        }
+        else{
+            LockModel.name = req.param("name");
+            LockModel.address_mac = req.param("address_mac");
+            LockModel.state = req.param("state");
+            LockModel.has_camera = req.param("has_camera");
+            LockModel.has_bell = req.param("has_bell");
+            LockModel.has_micro = req.param("has_micro");
+            LockModel.planning = req.param("planning");
+            LockModel.is_register = req.param("is_register");
+            var groups = req.param('groups');
+        }
 
         var createLock = function(){
             Lock.create({name:LockModel.name,address_mac:LockModel.address_mac,state:LockModel.state,has_camera:LockModel.has_camera,
                 has_bell:LockModel.has_bell,has_micro:LockModel.has_micro,planning:LockModel.planning,is_register:LockModel.is_register,groups:LockModel.groups}).exec(function(err,lock){
                 if(lock){
                     sails.log.debug({message:"create Lock: Success: ",lock:lock});
+                    if(req.isSocket){
+                        Lock.subscribe(req, lock.id);
+                        return res.status(201).json({lock:lock});
+                    }
                     return res.ok({message:"create Lock: Success !",lock:lock});
                 }
                 sails.log.debug("create Lock: Error:"+err);
+                if(req.isSocket)
+                    return res.status(400).json({err:"create Lock: Error"+err})
                 return res.badRequest("create Lock: Error:"+err);
             })
         }
@@ -68,12 +79,18 @@ module.exports = {
                                 }
                                 createLock();
                             }
-                            else
+                            else{
+                                if(req.isSocket)
+                                    return res.status(400).json({err:"create Lock: Error"+err})
                                 return res.badRequest("create Lock: Error: "+err);
+                            }
+
                         })
                     }
                     else{
                         sails.log.debug("create Lock: Error: Group not found "+err)
+                        if(req.isSocket)
+                            return res.status(400).json({err:"create Lock: Error Group not found"+err})
                         return res.badRequest("create Lock: Error: Group not found "+err);
                     }
                 })

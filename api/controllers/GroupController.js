@@ -13,6 +13,8 @@ module.exports = {
         Group.query('SELECT MAX(id) as lastId FROM `group`', function(err, results) {
             if (err){
                 sails.log.debug("create Group: Error: Impossible de recuperer le LAST ID GROUP");
+                if(req.isSocket)
+                    return res.status(400).json({err:"create Group:  Error: Impossible de recuperer le LAST ID GROUP : "+err})
                 return res.badRequest("create Group:  Error: Impossible de recuperer le LAST ID GROUP : "+err);
             }
 
@@ -21,6 +23,8 @@ module.exports = {
             Group.create({name:groupModel.name,code:code,locks:groupModel.locks}).exec(function(err, group){
                 if(err){
                     sails.log.debug('create Group: Error: Fail create group !');
+                    if(req.isSocket)
+                        return res.status(400).json({err:"create Group:  Error: Fail create group ! :"+err})
                     return res.badRequest('create Group:  Error: Fail create group ! :' + err);
                 }
                 sails.log.debug('create Group: Success: Group was successfully created !');
@@ -30,11 +34,16 @@ module.exports = {
                 groupUserModel.admin = true;
                 groupUserModel.validate = true;
                 GroupService.createGroupUser(groupUserModel,function(err,groupUser){
-                    if(err)
+                    if(err){
+                        if(req.isSocket)
+                            return res.status(400).json({err:"create Group:"+err})
                         return res.badRequest("create Group: "+err);
+                    }
+
+                    if(req.isSocket)
+                        Group.subscribe(req, group.id);
                     return res.status(201).json({created:group,groupUser:groupUser});
                 })
-
             });
         });
     },
@@ -94,8 +103,12 @@ module.exports = {
                         Group.publishDestroy(group.id)
 
                         GroupService.destroyGroupUserbyGroup(groupUserModel.group,function(err){
-                            if(err)
+                            if(err){
+                                sails.log.debug("destroy GroupUser ERROR "+err);
                                 return res.badRequest("destroy group: "+err);
+
+                            }
+                            sails.log.debug("destroy GroupUser success");
                         })
                     });
 
@@ -389,14 +402,16 @@ module.exports = {
                     "WHERE `group_locks`="+group.id;
                 Lock.query(request, function(err,lock){
                     if(lock){
-                        sails.log.debug({msg:"lock Group: Success: ",lock:lock});
-                        if(req.isSocket){
-                            sails.log.debug(lock.id);
-                            Lock.subscribe(req, _.pluck(lock,'id'))
-                            return res.json(lock)
+                        if(lock.length > 0){
+                            sails.log.debug({msg:"lock Group: Success: ",lock:lock});
+                            if(req.isSocket){
+                                sails.log.debug(lock.id);
+                                Lock.subscribe(req, _.pluck(lock,'id'))
+                                return res.json(lock)
+                            }
+                            else
+                                return res.ok(lock);
                         }
-                        else
-                            return res.ok(lock);
                     }
                     sails.log.debug("lock Group: Error:"+err);
                     return res.badRequest("lock Group: Error:"+err);
