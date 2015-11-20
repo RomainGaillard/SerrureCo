@@ -277,7 +277,6 @@ module.exports = {
                                     if(user)
                                         tabUser.push(user);
                                     j++;
-                                    sails.log.debug(j);
                                     if(j == groupUser.length){
                                         return res.ok(tabUser);
                                         sails.log.debug({msg:"usersWait:",tabUser:tabUser})
