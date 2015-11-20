@@ -156,6 +156,12 @@ module.exports = {
                     }
                 }
 
+                if(req.param("name") != null){
+                    if(!ToolsService.isEmpty(req.param("name"))) {
+                        lock.name = req.param("name");
+                    }
+                }
+
                 lock.save(function(err) {
                     if(err) {
                         console.log("save----" + err)
