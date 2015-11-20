@@ -267,10 +267,10 @@ module.exports = {
             if(group){
                 GroupUser.find({group:group.id, validate:0}).exec(function(err,groupUser) {
                     if(err) return res.badRequest("usersWait:"+err);
+                    var tabUser = [];
                     if(groupUser){
                         if(groupUser.length>0){
                             var j = 0;
-                            var tabUser = [];
                             for(var i=0; i<groupUser.length;i++){
                                 User.findOne({id:groupUser[i].user}).exec(function(err,user){
                                     if(err) return res.badRequest("usersWait:"+ err);
@@ -278,7 +278,7 @@ module.exports = {
                                         tabUser.push(user);
                                     j++;
                                     if(j == groupUser.length){
-                                        return res.ok(tabUser);
+                                        return res.status(200).json({usersWait:tabUser});
                                         sails.log.debug({msg:"usersWait:",tabUser:tabUser})
                                     }
                                 })
@@ -286,12 +286,12 @@ module.exports = {
                         }
                         else{
                             sails.log.debug("usersWait: No user found")
-                            return res.ok();
+                            return res.status(200).json({usersWait:tabUser});
                         }
                     }
                     else{
                         sails.log.debug("usersWait: No user found")
-                        return res.ok();
+                        return res.status(200).json({usersWait:tabUser});
                     }
 
                 })
