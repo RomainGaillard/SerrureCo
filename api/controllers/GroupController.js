@@ -381,7 +381,6 @@ module.exports = {
             }
         })
     },
-
     lock:function(req,res){
         var codeGroup = req.param("code");
         var userId    = req.passport.user.id;
@@ -396,21 +395,26 @@ module.exports = {
                             return  res.forbidden("Acces denied! You are not validate by the administrateur of the group !");
                     }
                 }
-                var request = "SELECT `l`.id, `l`.name, `l`.address_mac, `l`.state, `l`.has_camera, `l`.has_bell,`l`.has_micro,`l`.is_register " +
+                var request = "SELECT `l`.id, `l`.name, `l`.address_mac, `l`.state, `l`.has_camera, `l`.has_bell,`l`.has_micro,`l`.is_register, " +
+                    "`l`.createdAt, `l`.updatedAt " +
                     "FROM `lock` `l` " +
                     "INNER JOIN `group_locks__lock_groups` `lg` ON `l`.`id` = `lg`.`lock_groups` " +
                     "WHERE `group_locks`="+group.id;
-                Lock.query(request, function(err,lock){
-                    if(lock){
-                        if(lock.length > 0){
-                            sails.log.debug({msg:"lock Group: Success: ",lock:lock});
+                Lock.query(request, function(err,locks){
+
+                    if(locks){
+                        if(locks.length > 0){
+                            for(var i = 0; i < locks.length; i++)
+                            {
+                                locks[i] = LockService.format(locks[i]);
+                            }
+                            sails.log.debug({msg:"lock Group: Success: ",lock:locks});
                             if(req.isSocket){
-                                sails.log.debug(lock.id);
-                                Lock.subscribe(req, _.pluck(lock,'id'))
-                                return res.json(lock)
+                                Lock.subscribe(req, _.pluck(locks,'id'))
+                                return res.json(locks)
                             }
                             else
-                                return res.ok(lock);
+                                return res.ok(locks);
                         }
                     }
                     sails.log.debug("lock Group: Error:"+err);

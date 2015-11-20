@@ -112,6 +112,10 @@ module.exports = {
             "WHERE `GU`.user_id = "+userId+" AND `GU`.admin = true GROUP BY `l`.id";
         Lock.query(request, function(err,locks){
             if (locks) {
+                for(var i = 0; i < locks.length; i++)
+                {
+                    locks[i] = LockService.format(locks[i]);
+                }
                 res.ok(locks);
             } else {
                 res.badRequest(err);

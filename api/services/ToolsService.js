@@ -52,6 +52,9 @@ module.exports = {
             return true;
         else
             return false;
+    },
+    formatDate: function(mysqlDate){
+        return mysqlDate.toUTCString();
     }
 
 

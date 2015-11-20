@@ -9,6 +9,10 @@ module.exports = {
     findByCode:function(code,callback){
         Group.findOne({ where: { code: code }}).populate('groupUsers').populate('locks').exec(function (err, group){
             if (group) {
+                for(var i = 0; i < group.locks.length; i++)
+                {
+                    group.locks[i] = LockService.format(group.locks[i]);
+                }
                 callback(null,group);
             } else {
                 sails.log.debug("findByCode group: Error: The code group not exist ! : " + err);

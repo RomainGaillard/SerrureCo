@@ -53,6 +53,4 @@ var LogService = {
         });
     }
 };
-
-
 module.exports = LogService;
