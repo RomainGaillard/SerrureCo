@@ -446,8 +446,8 @@ module.exports = {
                             }
                             sails.log.debug({msg:"lock Group: Success: ",lock:locks});
                             if(req.isSocket){
-                                Lock.subscribe(req, _.pluck(locks,'id'))
-                                return res.json(locks)
+                                Lock.subscribe(req, _.pluck(lock,'id'))
+                                return res.json(lock)
                             }
                             else
                                 return res.ok(locks);
