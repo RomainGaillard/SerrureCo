@@ -360,6 +360,7 @@ module.exports = {
                                         if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
                                     })
                                 }
+                                Group.publishUpdate(group.id,{lockRemove:lock,group:group});
                                 return res.ok();
                             }
                             else{
