@@ -248,12 +248,14 @@ module.exports = {
                         Group.subscribe(req, group[i].group.id)
                     }
                     //Group.subscribe(req, _.pluck(group,'group_id'))
-                    return res.json(group)
+                    return res.status(200).json(group)
                 }
                 else
                     return res.ok(group);
             }
             sails.log.debug("group: Error:"+err);
+            if(req.isSocket)
+                return res.status(400).json({err:"group: Error:"+err});
             return res.badRequest("group: Error:"+err);
         })
     },
