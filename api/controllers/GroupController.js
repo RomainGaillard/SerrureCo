@@ -315,10 +315,10 @@ module.exports = {
                     if(err)
                         return res.badRequest("addLock:"+err);
                     if(admin){
-                        //return res.redirect("/group/"+group.id+"/lock/add/"+req.param('id'));
                         group.locks.add(req.param("id"));
                         group.save(function (err) {
                             if (err) return res.badRequest(err);
+                            Group.publishUpdate(group.id,{lockAdd:true,group:group});
                             return res.ok();
                         })
                     }

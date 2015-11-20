@@ -30,13 +30,18 @@ module.exports = {
             var groups = req.param('groups');
         }
 
-        var createLock = function(){
+        var createLock = function(groups){
             Lock.create({name:LockModel.name,address_mac:LockModel.address_mac,state:LockModel.state,has_camera:LockModel.has_camera,
                 has_bell:LockModel.has_bell,has_micro:LockModel.has_micro,planning:LockModel.planning,is_register:LockModel.is_register,groups:LockModel.groups}).exec(function(err,lock){
                 if(lock){
                     sails.log.debug({message:"create Lock: Success: ",lock:lock});
                     if(req.isSocket){
                         Lock.subscribe(req, lock.id);
+                        if(groups){
+                            for(var i=0;i<groups.length;i++){
+                                Group.publishUpdate(groups[i].id,{lockAdd:lock,group:groups[i]})
+                            }
+                        }
                         return res.status(201).json({lock:lock});
                     }
                     return res.ok({message:"create Lock: Success !",lock:lock});
@@ -77,7 +82,7 @@ module.exports = {
                                     else
                                         sails.log.debug("Create Lock: WARNING: L'user "+req.passport.user.id+" a essayé d'ajouter le groupe "+results.group_id+" sans les droits.")
                                 }
-                                createLock();
+                                createLock(groups);
                             }
                             else{
                                 if(req.isSocket)
