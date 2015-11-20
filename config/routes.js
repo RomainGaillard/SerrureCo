@@ -61,6 +61,7 @@ module.exports.routes = {
     'post /group/:code/lock/remove/:id':"GroupController.removeLock",
     'post /group/:code/join': "GroupController.join",
     'post /group/:code/askAccess':"GroupController.askAccess",
+    'post /group/:code/unvalid':"GroupController.findUnvalidUserInGroup",
 
     'put /group/:code/edit':"GroupController.edit",
     'put /group/:code/giveAccess':"GroupController.giveAccess",
