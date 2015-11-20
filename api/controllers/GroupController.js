@@ -248,13 +248,49 @@ module.exports = {
                         Group.subscribe(req, group[i].group.id)
                     }
                     //Group.subscribe(req, _.pluck(group,'group_id'))
-                    return res.json(group)
+                    return res.status(200).json(group)
                 }
                 else
                     return res.ok(group);
             }
             sails.log.debug("group: Error:"+err);
+            if(req.isSocket)
+                return res.status(400).json({err:"group: Error:"+err});
             return res.badRequest("group: Error:"+err);
+        })
+    },
+
+    findUnvalidUserInGroup: function (req, res) {
+        var codeGroup = req.param("code");
+        if(codeGroup === undefined) return res.badRequest();
+        GroupService.findByCode(codeGroup, function (err, group) {
+            if(err) return res.badRequest(err);
+            if(group){
+                GroupUser.find({group:group.id, validate:0}).exec(function(err,groupUser) {
+                    if(err) return res.badRequest(err);
+                    if(groupUser){
+                        var j = 0;
+                        var tabUser = [];
+                        for(var i=0; i<groupUser.length;i++){
+                            User.findOne({id:groupUser[i].user}).exec(function(err,user){
+                                if(err) return res.badRequest(err);
+                                if(user)
+                                    tabUser.push(user);
+                                j++;
+                                if(j == groupUser.length)
+                                    return res.ok(tabUser);
+                            })
+                        }
+                    }else{
+                        sails.log.debug("aucun user trouvé")
+                        return res.ok();
+                    }
+
+                })
+            }else{
+                sails.log.debug("addLock: Error: No group found");
+                return res.badRequest("addLock: Error: No group found");
+            }
         })
     },
     addLock:function(req,res){
@@ -353,7 +389,7 @@ module.exports = {
                                     sails.log.debug(err);
                                 }
                                 if(user){
-                                    tabUser.push(user);
+                                    tabUser.push(user.toJSON());
                                 }
                                 j++;
                                 if(j == results.length){
