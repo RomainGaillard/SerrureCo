@@ -385,29 +385,31 @@ module.exports = {
             if(group){
                 sails.log.debug("---------------------------------------------------------------", group.id);
 
-                var request = "SELECT `user_id` FROM `group_user` WHERE `group_id` ="+group.id;
+                var request = "SELECT `user_id`,`admin` FROM `group_user` WHERE `group_id` ="+group.id;
                     GroupUser.query(request, function(err, results) {
                     if (err) return res.serverError(err);
-                    //return res.ok(results.rows);
                     var j = 0;
                     var tabUser = [];
+                    var isAdmin = [];
                         for(var i = 0; i < results.length; i++){
+                            isAdmin.push(results[i].admin);
                             User.findOne({id:results[i].user_id}).exec(function(err, user){
                                 if (err) {
-                                    return res.badRequest;
                                     sails.log.debug(err);
+                                    return res.badRequest;
                                 }
                                 if(user){
+                                    user.admin = isAdmin[tabUser.length];
                                     tabUser.push(user.toJSON());
                                 }
                                 j++;
                                 if(j == results.length){
                                     sails.log.debug(tabUser)
-                                    return res.ok(tabUser);
+                                    return res.ok({users:tabUser});
                                 }
                             });
                         }
-                        if (results.length == 0) return res.ok(); 
+                        if (results.length == 0) return res.ok({users:tabUser});
                     });
                 
 /************************************************************************************************
