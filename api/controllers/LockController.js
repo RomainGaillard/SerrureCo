@@ -39,7 +39,7 @@ module.exports = {
                         Lock.subscribe(req, lock.id);
                         if(groups){
                             for(var i=0;i<groups.length;i++){
-                                Group.publishUpdate(groups[i].id,{lockAdd:lock,group:groups[i]})
+                                Group.publishUpdate(groups[i].id,{addLock:true,lock:lock,group:groups[i]})
                             }
                         }
                         return res.status(201).json({lock:lock});

@@ -179,7 +179,7 @@ module.exports = {
             GroupService.destroyGroupUserbyUserAndGroup(groupUserModel,function(err,success){
                 if(err)
                     return res.badRequest("exit group: "+err);
-                return res.ok("exit group: "+success);
+                return res.ok({msg:"exit group: "+success});
             })
         })
     },
@@ -197,7 +197,8 @@ module.exports = {
                 GroupService.destroyGroupUserbyUserAndGroup(groupUserModel,function(err,success){
                     if(err)
                         return res.badRequest("exclude group: "+err);
-                    return res.ok("exclude group: "+success);
+                    Group.publishUpdate(group.id,{exclude:true,codeGroup:group.code,email:email})
+                    return res.ok({msg:"exclude group: "+success});
                 })
             })
         })
@@ -215,7 +216,7 @@ module.exports = {
                 groupUserModel.user = req.passport.user.id;
                 GroupService.checkIsAdmin(groupUserModel,function(err,admin){
                     if(err)
-                        return res.badRequest("addLock:"+err);
+                        return res.badRequest("edit group:"+err);
                     if(admin) {
                         group.name = name;
                         group.save(function (err) {
@@ -229,13 +230,13 @@ module.exports = {
                         })
                     }
                     else{
-                        sails.log.debug("addLock: Error: User has no right to do this action.");
-                        return res.forbidden("addLock: Error: User has no right to do this action.");
+                        sails.log.debug("edit group: Error: User has no right to do this action.");
+                        return res.forbidden("edit group: Error: User has no right to do this action.");
                     }
                 })
             }else{
-                sails.log.debug("addLock: Error: No group found");
-                return res.badRequest("addLock: Error: No group found");
+                sails.log.debug("edit group: Error: No group found");
+                return res.badRequest("edit group: Error: No group found");
             }
         })
     },
@@ -318,7 +319,7 @@ module.exports = {
                         group.locks.add(req.param("id"));
                         group.save(function (err) {
                             if (err) return res.badRequest(err);
-                            Group.publishUpdate(group.id,{lockAdd:true,group:group});
+                            Group.publishUpdate(group.id,{addLock:true,group:group});
                             return res.ok();
                         })
                     }
@@ -358,9 +359,10 @@ module.exports = {
                                 if (lock.groups.length == 0){
                                     Lock.destroy({id:req.param("id")}).exec(function(err) {
                                         if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
+                                        Lock.publishDestroy(req.param("id"));
                                     })
                                 }
-                                Group.publishUpdate(group.id,{lockRemove:lock,group:group});
+                                Group.publishUpdate(group.id,{removeLock:true,lock:lock,group:group});
                                 return res.ok();
                             }
                             else{

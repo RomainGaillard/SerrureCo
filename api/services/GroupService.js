@@ -68,6 +68,7 @@ module.exports = {
                                 }
                                 sails.log.debug("updateGroupUser: Success: groupUser has been modified !");
                                 console.log(groupUser);
+                                Group.publishUpdate(group.id,{giveAccess:true,codeGroup:group.code,email:email,admin:giveAdmin})
                                 return callback(null,{message:"Success: groupUser has been modified !",groupUser:groupUser});
                             })
                         })
