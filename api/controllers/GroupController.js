@@ -392,7 +392,11 @@ module.exports = {
                     var tabUser = [];
                     var isAdmin = [];
                         for(var i = 0; i < results.length; i++){
-                            isAdmin.push(results[i].admin);
+                            if(results[i].admin == 1)
+                                isAdmin.push(true);
+                            else
+                                isAdmin.push(false);
+
                             User.findOne({id:results[i].user_id}).exec(function(err, user){
                                 if (err) {
                                     sails.log.debug(err);
