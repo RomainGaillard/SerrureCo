@@ -8,6 +8,12 @@ var passportModel = require('../models/Passport');
 
 module.exports = {
 
+    get:function(req,res){
+        if(req.isSocket){
+            User.subscribe(req,req.passport.user.id);
+            return res.status(200).json();
+        }
+    },
     update: function(req,res) {
         var name = req.param('firstname');
         var lastname = req.param('lastname');

@@ -40,6 +40,8 @@ module.exports.routes = {
    * route User                                                           *
    ***************************************************************************/
     'put /user/update': 'UserController.update',
+    'post /user/:email':'UserController.findByEmail',
+    'get /user':'UserController.get',
 
   /***************************************************************************
    * route Logs                                                           *
@@ -104,10 +106,7 @@ module.exports.routes = {
   'get /auth/:provider/callback': 'AuthController.callback',
   'get /auth/:provider/:action': 'AuthController.callback',
 
-  /***************************************************************************
-  * route User                                                               *
-  ***************************************************************************/
-  'post /user/:email':'UserController.findByEmail',
+
 
   /***************************************************************************
   *                                                                          *

@@ -64,15 +64,29 @@ module.exports = {
                     User.findOne({email:req.param("email")}).exec(function(err,user){
                         if(err || user === undefined){
                             sails.log.debug("join group: Error: Can't find user email !");
-                            return res.badRequest("join group: Error: Can't find user email !");
+                            return res.badRequest({msg:"join group: Error: Can't find user email !"});
                         }
                         groupUserModel.user = user.id;
                         groupUserModel.admin = req.param('admin');
                         groupUserModel.validate = true;
-                        GroupService.createGroupUser(groupUserModel,function(err,groupUser){
-                            if(err)
-                                return res.badRequest("join group: The user hasn't been added to the group :"+err);
-                            return res.ok({message:"join group:  The user has been added to the group : ",groupUser:groupUser});
+                        GroupUser.findOne({user_id:user.id,group_id:group.id}).exec(function(err,groupUser){
+                            if(groupUser){
+                                GroupService.updateGroupUser(codeGroup,req.passport.user.id,req.param("email"),req.param("admin"),function(err,success){
+                                    if(err)
+                                        return res.badRequest("join group: "+err);
+                                    Group.publishUpdate(group.id,{join:true,group:group,email:req.param("email"),admin:req.param("admin")})
+                                    return res.ok({message:"join group: The user has been added to the group",groupUser:success});
+                                })
+                            }
+                            else{
+                                GroupService.createGroupUser(groupUserModel,function(err,groupUser){
+                                    if(err)
+                                        return res.badRequest("join group: The user hasn't been added to the group :"+err);
+                                    User.publishUpdate(user.id,{join:true});
+                                    Group.publishUpdate(group.id,{join:true,group:group,email:req.param("email"),admin:req.param("admin")})
+                                    return res.ok({message:"join group:  The user has been added to the group : ",groupUser:groupUser});
+                                })
+                            }
                         })
                     })
                 }
