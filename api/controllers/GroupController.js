@@ -2,6 +2,7 @@
  * Created by Romain Gaillard on 23/10/2015.
  */
 var groupModel = require('../models/Group.js');
+var log = require('../models/Log.js');
 var groupUserModel = require('../models/GroupUser.js');
 
 module.exports = {
@@ -318,6 +319,11 @@ module.exports = {
                         group.locks.add(req.param("id"));
                         group.save(function (err) {
                             if (err) return res.badRequest(err);
+
+                            log.message = "Ajout de la serrure au groupe "+group.name+" ";
+                            log.lock    = req.param("id");
+                            log.user    = req.passport.user.id;
+                            LogService.create(log, function(isCreated){});
                             Group.publishUpdate(group.id,{lockAdd:true,group:group});
                             return res.ok();
                         })
@@ -352,6 +358,11 @@ module.exports = {
                     group.save(function(err){
                         console.log(err);
                         if (err) return res.badRequest(err);
+                        log.message = "La serrure a été enlevé du groupe "+group.name+" ";
+                        log.lock    = req.param("id");
+                        log.user    = req.passport.user.id;
+                        LogService.create(log, function(isCreated){});
+
                         Lock.findOne({id:req.param("id")}).populate('groups').exec(function(err,lock) {
                             if (err) return res.badRequest;
                             if(lock){

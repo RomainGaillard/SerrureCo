@@ -147,36 +147,71 @@ module.exports = {
             if(err) return res.badRequest(err);
             if(lock) {
 
+                log.message = "Modification de la serrure ";
+                log.lock    = lock;
+                log.user    = req.passport.user.id;
                 if(req.param("state") != null){
                     sails.log.debug(req.param("state"));
-                    sails.log.debug(ToolsService.getBoolean(req.param("state")))
-                    lock.state = ToolsService.getBoolean(req.param("state"));
+                    var state = ToolsService.getBoolean(req.param("state"));
+                    sails.log.debug(state);
+
+                    if(lock.state != state) {
+                        if (state == true) {
+                            log.message = "Ouverture de la serrure ";
+                        } else {
+                            log.message = "Fermeture de la serrure ";
+                        }
+                    }
+                    lock.state = state;
+
                 }
 
                 if(req.param("has_camera") != null){
-                    lock.has_camera = ToolsService.getBoolean(req.param("has_camera"));
+                    var hasCamera = ToolsService.getBoolean(req.param("has_camera"));
+                    if(hasCamera != lock.has_camera) {
+                        log.message += "portant sur le système de caméra ";
+                    }
+                    lock.has_camera = hasCamera;
                 }
 
                 if(req.param("has_bell") != null){
-                    lock.has_bell = ToolsService.getBoolean(req.param("has_bell"));
+                    var hasBell = ToolsService.getBoolean(req.param("has_bell"));
+                    if(hasBell != lock.has_bell) {
+                        log.message += "portant sur la sonette ";
+                    }
+                    lock.has_bell = hasBell;
                 }
 
                 if(req.param("has_micro") != null){
-                    lock.has_micro = ToolsService.getBoolean(req.param("has_micro"));
+                    var hasMicro = ToolsService.getBoolean(req.param("has_micro"));
+                    if(hasMicro != lock.has_micro) {
+                        log.message += "portant sur le microphone ";
+                    }
+                    lock.has_micro = hasMicro;
                 }
 
                 if(req.param("is_register") != null){
-                    lock.is_register = ToolsService.getBoolean(req.param("is_register"));
+                    var isRegister = ToolsService.getBoolean(req.param("is_register"));
+                    if(isRegister != lock.is_register) {
+                        log.message += "portant sur l'enregistrement des logs ";
+                    }
+                    lock.is_register = isRegister;
                 }
 
                 if(req.param("address_mac") != null){
                     if(!ToolsService.isEmpty(req.param("address_mac"))) {
+                        if (lock.address_mac != req.param("address_mac")) {
+                            log.message += "portant sur son adresse mac ";
+                        }
                         lock.address_mac = req.param("address_mac");
                     }
                 }
 
                 if(req.param("name") != null){
                     if(!ToolsService.isEmpty(req.param("name"))) {
+                        if (lock.name != req.param("name")) {
+                            log.message += "portant sur son nom ";
+                        }
                         lock.name = req.param("name");
                     }
                 }
@@ -186,6 +221,7 @@ module.exports = {
                         console.log("save----" + err)
                         return res.send(err.status, err);
                     }
+                    LogService.create(log, function(isCreated){});
                     Lock.publishUpdate(lock.id,{lock:lock})
                     return res.send(200, lock);
                 });
