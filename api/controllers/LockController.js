@@ -10,6 +10,8 @@
  */
 
 var LockModel = require('../models/Lock.js');
+var log = require('../models/Log.js');
+
 var GroupUserModel = require('../models/GroupUser.js');
 
 module.exports = {
@@ -34,13 +36,25 @@ module.exports = {
             Lock.create({name:LockModel.name,address_mac:LockModel.address_mac,state:LockModel.state,has_camera:LockModel.has_camera,
                 has_bell:LockModel.has_bell,has_micro:LockModel.has_micro,planning:LockModel.planning,is_register:LockModel.is_register,groups:LockModel.groups}).exec(function(err,lock){
                 if(lock){
+                    log.message = "Création de la serrure";
+                    log.lock    = lock;
+                    log.user    = req.passport.user.id;
+
+                    LogService.create(log, function(isCreated){});
                     sails.log.debug({message:"create Lock: Success: ",lock:lock});
                     if(req.isSocket){
                         Lock.subscribe(req, lock.id);
                         if(groups){
+                            log.message = "Ajout de la serrure au(x) groupe(s) : ";
                             for(var i=0;i<groups.length;i++){
                                 Group.publishUpdate(groups[i].id,{lockAdd:lock,group:groups[i]})
+                                log.message += groups[i].name;
+                                if (i+1< groups.length) {
+                                    log.message += ", ";
+                                }
                             }
+
+                            LogService.create(log, function(isCreated){});
                         }
                         return res.status(201).json({lock:lock});
                     }
