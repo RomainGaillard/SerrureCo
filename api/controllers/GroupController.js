@@ -168,6 +168,7 @@ module.exports = {
             GroupService.createGroupUser(groupUserModel,function(err,groupUser){
                 if(err)
                     return res.badRequest("askAccess group: Error: The request for join group fail !" + err);
+                Group.publishUpdate(groupUserModel.group,{askAccess:true,codeGroup:codeGroup,email:req.passport.user.email})
                 return res.ok({message:"askAccess group: Success: The request for join group has been register !",groupUser:groupUser});
             })
         });
@@ -217,6 +218,7 @@ module.exports = {
             GroupService.destroyGroupUserbyUserAndGroup(groupUserModel,function(err,success){
                 if(err)
                     return res.badRequest("exit group: "+err);
+                Group.publishUpdate(group.id,{exit:true,codeGroup:codeGroup,email:req.passport.user.email})
                 return res.ok({msg:"exit group: "+success});
             })
         })
