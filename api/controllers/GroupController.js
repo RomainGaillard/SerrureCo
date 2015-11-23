@@ -183,21 +183,24 @@ module.exports = {
             GroupUser.find({ where : {group_id: group.id,admin:true}}).exec(function (err, group) {
                 if(err) return res.badRequest("giveAccess group: " +err);
                 if(group){
-                    if(group.length > 1 || giveAdmin == true){
+
+                    if(req.passport.user.id == email && giveAdmin==false && group.length < 1){
+                        sails.log.debug("giveAccess group: Error: Require one administrator !")
+                        return res.badRequest({err: "Il faut au moins un administrateur !"})
+                    }
+
+                    if(group.length > 0){
                         GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,giveAdmin,function(err,success){
                             if(err)
                                 return res.badRequest("giveAccess group: "+err);
                             return res.ok({message:"giveAccess group: ",groupUser:success});
                         })
                     }
-                    else {
-                        sails.log.debug("giveAccess group: Error: Require one administrator !")
-                        return res.badRequest({err: "Il faut au moins un administrateur !"})
-                    }
+                    else
+                        return res.badRequest();
                 }
                 else{
-                    sails.log.debug("giveAccess group: Error: Require one administrator !")
-                    return res.badRequest({err:"Il faut au moins un administrateur !"})
+                    return res.badRequest()
                 }
             })
         })
