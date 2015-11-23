@@ -431,7 +431,7 @@ module.exports = {
             if(group){
                 sails.log.debug("---------------------------------------------------------------", group.id);
 
-                var request = "SELECT `user_id`,`admin` FROM `group_user` WHERE `group_id` ="+group.id;
+                var request = "SELECT `user_id`,`admin` FROM `group_user` WHERE `group_id` ="+group.id+" AND `validate` = true";
                     GroupUser.query(request, function(err, results) {
                     if (err) return res.serverError(err);
                     var j = 0;
