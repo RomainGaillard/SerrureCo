@@ -39,9 +39,6 @@ var LogService = {
         Log.query(request, function (err, found){
             if (found) {
                 var logs    = Array();
-                //var user    = Array();
-                //var log     = Array();
-
                 for(var i =0; i < found.length; i++) {
                     var user = {
                         username:     found[i].username
@@ -53,7 +50,7 @@ var LogService = {
                         lock:        found[i].lock_id,
                         user:        user
                     };
-                    
+
                     logs[i]            = log;
                 }
                 callback(null,logs);
