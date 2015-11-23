@@ -178,11 +178,31 @@ module.exports = {
         var giveAdmin = req.param('admin');
         if(giveAdmin === undefined)
             giveAdmin = false;
-        GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,giveAdmin,function(err,success){
-            if(err)
-                return res.badRequest("giveAccess group: "+err);
-            return res.ok({message:"giveAccess group: ",groupUser:success});
+
+        GroupService.findByCode(codeGroup,function(err,group){
+            GroupUser.find({ where : {group_id: group.id,admin:true}}).exec(function (err, group) {
+                if(err) return res.badRequest("giveAccess group: " +err);
+                if(group){
+                    if(group.length > 1 || giveAdmin == true){
+                        GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,giveAdmin,function(err,success){
+                            if(err)
+                                return res.badRequest("giveAccess group: "+err);
+                            return res.ok({message:"giveAccess group: ",groupUser:success});
+                        })
+                    }
+                    else {
+                        sails.log.debug("giveAccess group: Error: Require one administrator !")
+                        return res.badRequest({err: "Il faut au moins un administrateur !"})
+                    }
+                }
+                else{
+                    sails.log.debug("giveAccess group: Error: Require one administrator !")
+                    return res.badRequest({err:"Il faut au moins un administrateur !"})
+                }
+            })
         })
+
+
     },
     exit: function(req,res){
         var codeGroup = req.param('code')
