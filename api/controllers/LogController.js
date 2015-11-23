@@ -21,7 +21,7 @@ module.exports = {
                 res.badRequest()
             }
             else{
-                res.ok(logs);
+                res.ok({logs:logs});
             }
         });
     },
@@ -44,7 +44,7 @@ module.exports = {
                     res.badRequest()
                 }
                 else{
-                    res.ok(logs);
+                    res.ok({log:logs});
                 }
             }
         );
@@ -63,7 +63,7 @@ module.exports = {
                     res.badRequest()
                 }
                 else{
-                    res.ok(logs);
+                    res.ok({logs:logs});
                 }
             }
         );
