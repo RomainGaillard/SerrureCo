@@ -301,7 +301,7 @@ module.exports = {
         GroupService.findByCode(codeGroup, function (err, group) {
             if(err) return res.badRequest("usersWait: Error: Code group not exist: "+err);
             if(group){
-                GroupUser.find({group:group.id, validate:0}).exec(function(err,groupUser) {
+                GroupUser.find({group_id:group.id, validate:0}).exec(function(err,groupUser) {
                     if(err) return res.badRequest("usersWait:"+err);
                     var tabUser = [];
                     if(groupUser){
@@ -314,14 +314,14 @@ module.exports = {
                                         tabUser.push(user);
                                     j++;
                                     if(j == groupUser.length){
-                                        return res.status(200).json({usersWait:tabUser});
                                         sails.log.debug({msg:"usersWait:",tabUser:tabUser})
+                                        return res.status(200).json({usersWait:tabUser});
                                     }
                                 })
                             }
                         }
                         else{
-                            sails.log.debug("usersWait: No user found")
+                            sails.log.debug("usersWait: No user found !!")
                             return res.status(200).json({usersWait:tabUser});
                         }
                     }
