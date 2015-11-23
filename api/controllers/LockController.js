@@ -47,7 +47,7 @@ module.exports = {
                         if(groups){
                             log.message = "Ajout de la serrure au(x) groupe(s) : ";
                             for(var i=0;i<groups.length;i++){
-                                Group.publishUpdate(groups[i].id,{lockAdd:lock,group:groups[i]})
+                                Group.publishUpdate(groups[i].id,{addLock:true,lock:lock,group:groups[i]})
                                 log.message += groups[i].name;
                                 if (i+1< groups.length) {
                                     log.message += ", ";

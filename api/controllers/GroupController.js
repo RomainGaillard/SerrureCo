@@ -64,15 +64,29 @@ module.exports = {
                     User.findOne({email:req.param("email")}).exec(function(err,user){
                         if(err || user === undefined){
                             sails.log.debug("join group: Error: Can't find user email !");
-                            return res.badRequest("join group: Error: Can't find user email !");
+                            return res.badRequest({msg:"join group: Error: Can't find user email !"});
                         }
                         groupUserModel.user = user.id;
                         groupUserModel.admin = req.param('admin');
                         groupUserModel.validate = true;
-                        GroupService.createGroupUser(groupUserModel,function(err,groupUser){
-                            if(err)
-                                return res.badRequest("join group: The user hasn't been added to the group :"+err);
-                            return res.ok({message:"join group:  The user has been added to the group : ",groupUser:groupUser});
+                        GroupUser.findOne({user_id:user.id,group_id:group.id}).exec(function(err,groupUser){
+                            if(groupUser){
+                                GroupService.updateGroupUser(codeGroup,req.passport.user.id,req.param("email"),req.param("admin"),function(err,success){
+                                    if(err)
+                                        return res.badRequest("join group: "+err);
+                                    Group.publishUpdate(group.id,{join:true,group:group,email:req.param("email"),admin:req.param("admin")})
+                                    return res.ok({message:"join group: The user has been added to the group",groupUser:success});
+                                })
+                            }
+                            else{
+                                GroupService.createGroupUser(groupUserModel,function(err,groupUser){
+                                    if(err)
+                                        return res.badRequest("join group: The user hasn't been added to the group :"+err);
+                                    User.publishUpdate(user.id,{join:true});
+                                    Group.publishUpdate(group.id,{join:true,group:group,email:req.param("email"),admin:req.param("admin")})
+                                    return res.ok({message:"join group:  The user has been added to the group : ",groupUser:groupUser});
+                                })
+                            }
                         })
                     })
                 }
@@ -180,7 +194,7 @@ module.exports = {
             GroupService.destroyGroupUserbyUserAndGroup(groupUserModel,function(err,success){
                 if(err)
                     return res.badRequest("exit group: "+err);
-                return res.ok("exit group: "+success);
+                return res.ok({msg:"exit group: "+success});
             })
         })
     },
@@ -198,7 +212,8 @@ module.exports = {
                 GroupService.destroyGroupUserbyUserAndGroup(groupUserModel,function(err,success){
                     if(err)
                         return res.badRequest("exclude group: "+err);
-                    return res.ok("exclude group: "+success);
+                    Group.publishUpdate(group.id,{exclude:true,codeGroup:group.code,email:email})
+                    return res.ok({msg:"exclude group: "+success});
                 })
             })
         })
@@ -216,7 +231,7 @@ module.exports = {
                 groupUserModel.user = req.passport.user.id;
                 GroupService.checkIsAdmin(groupUserModel,function(err,admin){
                     if(err)
-                        return res.badRequest("addLock:"+err);
+                        return res.badRequest("edit group:"+err);
                     if(admin) {
                         group.name = name;
                         group.save(function (err) {
@@ -230,13 +245,13 @@ module.exports = {
                         })
                     }
                     else{
-                        sails.log.debug("addLock: Error: User has no right to do this action.");
-                        return res.forbidden("addLock: Error: User has no right to do this action.");
+                        sails.log.debug("edit group: Error: User has no right to do this action.");
+                        return res.forbidden("edit group: Error: User has no right to do this action.");
                     }
                 })
             }else{
-                sails.log.debug("addLock: Error: No group found");
-                return res.badRequest("addLock: Error: No group found");
+                sails.log.debug("edit group: Error: No group found");
+                return res.badRequest("edit group: Error: No group found");
             }
         })
     },
@@ -319,12 +334,11 @@ module.exports = {
                         group.locks.add(req.param("id"));
                         group.save(function (err) {
                             if (err) return res.badRequest(err);
-
                             log.message = "Ajout de la serrure au groupe "+group.name+" ";
                             log.lock    = req.param("id");
                             log.user    = req.passport.user.id;
                             LogService.create(log, function(isCreated){});
-                            Group.publishUpdate(group.id,{lockAdd:true,group:group});
+                            Group.publishUpdate(group.id,{addLock:true,group:group});
                             return res.ok();
                         })
                     }
@@ -369,9 +383,10 @@ module.exports = {
                                 if (lock.groups.length == 0){
                                     Lock.destroy({id:req.param("id")}).exec(function(err) {
                                         if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
+                                        Lock.publishDestroy(req.param("id"));
                                     })
                                 }
-                                Group.publishUpdate(group.id,{lockRemove:lock,group:group});
+                                Group.publishUpdate(group.id,{removeLock:true,lock:lock,group:group});
                                 return res.ok();
                             }
                             else{
