@@ -40,6 +40,7 @@ module.exports = {
                     console.log("save----" + err)
                     return res.send(err.status, err);
                 }
+                User.publishUpdate(user.id,{update:true,user:user});
                 return res.send(200, user);
             })
         })

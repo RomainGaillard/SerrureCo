@@ -67,7 +67,7 @@ module.exports = {
             })
         }
         var addGroupAtLock = function(){
-            if(groups){
+            if(groups && groups[0] != undefined){
                 var groupsCode = new Array();
                 // rechercher id des codes.
 
