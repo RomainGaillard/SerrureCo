@@ -10,7 +10,8 @@ module.exports = {
     attributes: {
         name:{
             type: 'string',
-            required: true
+            required: true,
+            defaultsTo:'Default'
         },
         address_mac:{
             type: 'string',
