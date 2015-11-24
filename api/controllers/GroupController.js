@@ -258,6 +258,8 @@ module.exports = {
                     if(err)
                         return res.badRequest("edit group:"+err);
                     if(admin) {
+                        if(name == "")
+                            name = "Default";
                         group.name = name;
                         group.save(function (err) {
                             if (err) {
@@ -266,6 +268,7 @@ module.exports = {
                             }
                             sails.log.debug("edit group: Success: group has been modified !");
                             console.log(group);
+                            Group.publishUpdate(group.id,{update:true,codeGroup:group.code,name:group.name});
                             return res.ok({message: "edit group: Success: group has been modified !", group: group});
                         })
                     }
