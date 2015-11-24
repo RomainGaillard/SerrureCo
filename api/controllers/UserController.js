@@ -5,6 +5,7 @@
 
 var userModel = require('../models/User');
 var passportModel = require('../models/Passport');
+var bcrypt = require('bcryptjs');
 
 module.exports = {
 
@@ -43,7 +44,8 @@ module.exports = {
                 User.publishUpdate(user.id,{update:true,user:user});
                 return res.send(200, user);
             })
-        })
+        });
+
         //User.update({firstname: req.passport.user.firstname},{firstname: name}, {lastname: req.passport.user.lastname}, {lastname: lastname}, {email: req.passport.user.email}, {email: email}).exec(function(err, callback) {
         //    if(err){
         //        console.log(err);
@@ -65,6 +67,49 @@ module.exports = {
         //req.passport.user.update({firstname: name}, {lastname: lastname}, {email: email}).exec(function(err, callback) {
         //    console.log(err)
         //})
+    },
+
+    updatePassword: function (req,res) {
+        var oldPassword = req.param("oldPassword");
+        var newPassword = req.param("newPassword");
+
+        if(!oldPassword || !newPassword) return res.badRequest();
+        Passport.findOne({user: req.passport.user.id}).exec(function (err, passport) {
+            if(err) return res.send(err.status, err);
+            if(passport){
+                console.log(passport);
+                bcrypt.compare(oldPassword,passport.password, function (err, isGood) {
+                    if(err) return res.badRequest();
+                    if(!isGood){
+                        return res.forbidden();
+                    }
+                    passport.password = newPassword;
+
+                    passport.save(function(err) {
+                        if(err) return res.send(err.status, err);
+                        return res.send(200);
+                    })
+/*                    bcrypt.hash(newPassword,10, function (err, hash) {
+                        console.log("lalalal");
+                        if(err) return res.badRequest();
+                        console.log(newPassword);
+                        console.log(hash);
+                        console.log("lalalala");
+                        passport.password = hash;
+
+                        passport.save(function(err) {
+                            if(err) return res.send(err.status, err);
+                            console.log("lalalalala");
+                            return res.send(200);
+                        })
+                    })*/
+                })
+            }else{
+                return res.badRequest()
+            }
+
+
+        })
     },
 
     findByEmail: function (req, res, next) {
