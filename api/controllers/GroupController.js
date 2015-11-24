@@ -11,6 +11,9 @@ module.exports = {
         sails.log.debug("Creation GROUP: "+groupModel.name);
         groupModel.locks = req.param('locks');
 
+        sails.log.debug(groupModel.locks.length);
+        sails.log.debug(groupModel.locks[0]);
+
         Group.query('SELECT MAX(id) as lastId FROM `group`', function(err, results) {
             if (err){
                 sails.log.debug("create Group: Error: Impossible de recuperer le LAST ID GROUP");

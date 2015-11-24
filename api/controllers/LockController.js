@@ -135,7 +135,7 @@ module.exports = {
                 {
                     locks[i] = LockService.format(locks[i]);
                 }
-                res.ok(locks);
+                res.ok({locks:locks});
             } else {
                 res.badRequest(err);
                 console.log(err);
