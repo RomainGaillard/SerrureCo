@@ -371,10 +371,15 @@ module.exports = {
                         group.locks.add(req.param("id"));
                         group.save(function (err) {
                             if (err) return res.badRequest(err);
-                            log.message = "Ajoutée au groupe "+group.name+" ";
-                            log.lock    = req.param("id");
-                            log.user    = req.passport.user.id;
-                            LogService.create(log, function(isCreated){});
+                            Lock.find({id:req.param("id")}).exec(function(err,lock) {
+                                if(err) return res.badRequest("addLock: Error: No Lock found");
+                                if (lock.is_register) {
+                                    log.message = "Ajoutée au groupe "+group.name+" ";
+                                    log.lock    = req.param("id");
+                                    log.user    = req.passport.user.id;
+                                    LogService.create(log, function(isCreated){});
+                                }
+                            })
                             Group.publishUpdate(group.id,{addLock:true,group:group});
                             return res.ok();
                         })
@@ -409,10 +414,6 @@ module.exports = {
                     group.save(function(err){
                         console.log(err);
                         if (err) return res.badRequest(err);
-                        log.message = "Retirée du groupe "+group.name+" ";
-                        log.lock    = req.param("id");
-                        log.user    = req.passport.user.id;
-                        LogService.create(log, function(isCreated){});
 
                         Lock.findOne({id:req.param("id")}).populate('groups').exec(function(err,lock) {
                             if (err) return res.badRequest;
@@ -422,6 +423,12 @@ module.exports = {
                                         if (err) return res.badRequest("can't delete lock from the database despite it's not left in any group");
                                         Lock.publishDestroy(req.param("id"));
                                     })
+                                }
+                                if (lock.is_register) {
+                                    log.message = "Retirée du groupe "+group.name+" ";
+                                    log.lock    = req.param("id");
+                                    log.user    = req.passport.user.id;
+                                    LogService.create(log, function(isCreated){});
                                 }
                                 Group.publishUpdate(group.id,{removeLock:true,lock:lock,group:group});
                                 return res.ok();

@@ -36,11 +36,13 @@ module.exports = {
             Lock.create({name:LockModel.name,address_mac:LockModel.address_mac,state:LockModel.state,has_camera:LockModel.has_camera,
                 has_bell:LockModel.has_bell,has_micro:LockModel.has_micro,planning:LockModel.planning,is_register:LockModel.is_register,groups:LockModel.groups}).exec(function(err,lock){
                 if(lock){
-                    log.message = "Création de la serrure";
-                    log.lock    = lock;
-                    log.user    = req.passport.user.id;
-
-                    LogService.create(log, function(isCreated){});
+                    if (lock.is_register) {
+                        log.message = "Création de la serrure";
+                        log.lock = lock;
+                        log.user = req.passport.user.id;
+                        LogService.create(log, function (isCreated) {
+                        });
+                    }
                     sails.log.debug({message:"create Lock: Success: ",lock:lock});
                     if(req.isSocket){
                         Lock.subscribe(req, lock.id);
@@ -53,8 +55,9 @@ module.exports = {
                                     log.message += ", ";
                                 }
                             }
-
-                            LogService.create(log, function(isCreated){});
+                            if (lock.is_register) {
+                                LogService.create(log, function(isCreated){});
+                            }
                         }
                         return res.status(201).json({lock:lock});
                     }
@@ -221,7 +224,10 @@ module.exports = {
                         console.log("save----" + err)
                         return res.send(err.status, err);
                     }
-                    LogService.create(log, function(isCreated){});
+                    if (lock.is_register) {
+                        LogService.create(log, function (isCreated) {
+                        });
+                    }
                     Lock.publishUpdate(lock.id,{lock:lock})
                     return res.send(200, lock);
                 });
