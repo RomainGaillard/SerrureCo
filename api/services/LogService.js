@@ -7,7 +7,7 @@ var LogService = {
      * @description :: Récupère dans la bdd les logs correspondant à la serrure fourni en paramètre
      */
     findByLock: function findByLockService(lock, callback ) {
-        Log.find({ where: { lock: lock }, limit: 200 }).populate("user").exec(function (err, found){
+        Log.find({ where: { lock: lock }, limit: 200 }).sort("createdAt DESC").populate("user").exec(function (err, found){
             if (found) {
                 callback(null,found);
             } else {
@@ -19,7 +19,7 @@ var LogService = {
      * @description :: Récupère dans la bdd les logs correspondant à la serrure et la date fournis en paramètre
      */
     findByLockAndDate: function findByLockAndDateService(lock, date, callback) {
-        Log.find({ where: { lock: lock, createdAt: {'contains' : date} } }).populate("user").exec(function (err, found){
+        Log.find({ where: { lock: lock, createdAt: {'contains' : date} } }).sort("createdAt DESC").populate("user").exec(function (err, found){
             if (found) {
                 callback(null,found);
             } else {
@@ -35,7 +35,7 @@ var LogService = {
         var request = 'SELECT `l`.`message`, `l`.`id`, `l`.`createdAt`, `l`.`updatedAt`, `l`.`lock_id`, `l`.`user_id`, `u`.`username` ' +
             'FROM `log` `l` ' +
             'INNER JOIN `user` `u` ON `l`.`user_id`=`u`.`id` ' +
-            'WHERE `l`.`createdAt` >= \"'+start+'\" AND `l`.`createdAt` <= \"'+end+'\"';
+            'WHERE `l`.`createdAt` >= \"'+start+'\" AND `l`.`createdAt` <= \"'+end+'\" AND `l`.`lock_id`='+lock+' ORDER BY `l`.`createdAt` DESC ';
         Log.query(request, function (err, found){
             if (found) {
                 var logs    = Array();

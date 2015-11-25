@@ -36,6 +36,7 @@ module.exports = {
      * }
      */
     logsByLockAndDate: function (req, res) {
+        console.log("#########################"+req.param('date')+"########################");
         LogService.findByLockAndDate(
             req.param('id'),
             req.param('date'),
@@ -44,7 +45,7 @@ module.exports = {
                     res.badRequest()
                 }
                 else{
-                    res.ok({log:logs});
+                    res.ok({logs:logs});
                 }
             }
         );
