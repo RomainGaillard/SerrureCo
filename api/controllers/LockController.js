@@ -149,7 +149,6 @@ module.exports = {
         Lock.findOne({where:{id:req.param("id")}}).exec(function (err, lock) {
             if(err) return res.badRequest(err);
             if(lock) {
-
                 log.message = "Modification de la serrure ";
                 log.lock    = lock;
                 log.user    = req.passport.user.id;
