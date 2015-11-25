@@ -45,7 +45,7 @@ module.exports = {
                     if(req.isSocket){
                         Lock.subscribe(req, lock.id);
                         if(groups){
-                            log.message = "Ajout de la serrure au(x) groupe(s) : ";
+                            log.message = "Ajoutée au(x) groupe(s) : ";
                             for(var i=0;i<groups.length;i++){
                                 Group.publishUpdate(groups[i].id,{addLock:true,lock:lock,group:groups[i]})
                                 log.message += groups[i].name;

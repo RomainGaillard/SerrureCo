@@ -371,7 +371,7 @@ module.exports = {
                         group.locks.add(req.param("id"));
                         group.save(function (err) {
                             if (err) return res.badRequest(err);
-                            log.message = "Ajout de la serrure au groupe "+group.name+" ";
+                            log.message = "Ajoutée au groupe "+group.name+" ";
                             log.lock    = req.param("id");
                             log.user    = req.passport.user.id;
                             LogService.create(log, function(isCreated){});
@@ -409,7 +409,7 @@ module.exports = {
                     group.save(function(err){
                         console.log(err);
                         if (err) return res.badRequest(err);
-                        log.message = "La serrure a été enlevé du groupe "+group.name+" ";
+                        log.message = "Retirée du groupe "+group.name+" ";
                         log.lock    = req.param("id");
                         log.user    = req.passport.user.id;
                         LogService.create(log, function(isCreated){});
