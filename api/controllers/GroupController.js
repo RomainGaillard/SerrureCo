@@ -11,6 +11,9 @@ module.exports = {
         sails.log.debug("Creation GROUP: "+groupModel.name);
         groupModel.locks = req.param('locks');
 
+        sails.log.debug(groupModel.locks.length);
+        sails.log.debug(groupModel.locks[0]);
+
         Group.query('SELECT MAX(id) as lastId FROM `group`', function(err, results) {
             if (err){
                 sails.log.debug("create Group: Error: Impossible de recuperer le LAST ID GROUP");
@@ -53,35 +56,41 @@ module.exports = {
         var codeGroup = req.param('code');
         GroupService.findByCode(codeGroup,function(err,group){
             if(err || group === undefined)
-                return res.badRequest("join group: "+err);
+                return res.badRequest({msg:"join group: "+err});
 
             groupUserModel.group = group.id;
             groupUserModel.user = req.passport.user.id;
             GroupService.checkIsAdmin(groupUserModel,function(err,admin){
                 if(err)
-                    return res.badRequest("join group: "+err);
+                    return res.badRequest({msg:"join group: "+err});
                 if(admin){
                     User.findOne({email:req.param("email")}).exec(function(err,user){
                         if(err || user === undefined){
                             sails.log.debug("join group: Error: Can't find user email !");
-                            return res.badRequest({msg:"join group: Error: Can't find user email !"});
+                            return res.badRequest({msg:"Aucun compte associé à cet email"});
                         }
                         groupUserModel.user = user.id;
                         groupUserModel.admin = req.param('admin');
                         groupUserModel.validate = true;
                         GroupUser.findOne({user_id:user.id,group_id:group.id}).exec(function(err,groupUser){
                             if(groupUser){
-                                GroupService.updateGroupUser(codeGroup,req.passport.user.id,req.param("email"),req.param("admin"),function(err,success){
-                                    if(err)
-                                        return res.badRequest("join group: "+err);
-                                    Group.publishUpdate(group.id,{join:true,group:group,email:req.param("email"),admin:req.param("admin")})
-                                    return res.ok({message:"join group: The user has been added to the group",groupUser:success});
-                                })
+                                if(groupUser.validate){
+                                    sails.log.debug("join group: Error: The user is already in group !");
+                                    return res.badRequest({msg:"L'utilisateur est déjà dans le groupe !"});
+                                }
+                                else{
+                                    GroupService.updateGroupUser(codeGroup,req.passport.user.id,req.param("email"),req.param("admin"),function(err,success){
+                                        if(err)
+                                            return res.badRequest({msg:"join group: "+err});
+                                        Group.publishUpdate(group.id,{join:true,group:group,email:req.param("email"),admin:req.param("admin")})
+                                        return res.ok({message:"join group: The user has been added to the group",groupUser:success});
+                                    })
+                                }
                             }
                             else{
                                 GroupService.createGroupUser(groupUserModel,function(err,groupUser){
                                     if(err)
-                                        return res.badRequest("join group: The user hasn't been added to the group :"+err);
+                                        return res.badRequest({msg:"join group: The user hasn't been added to the group :"+err});
                                     User.publishUpdate(user.id,{join:true});
                                     Group.publishUpdate(group.id,{join:true,group:group,email:req.param("email"),admin:req.param("admin")})
                                     return res.ok({message:"join group:  The user has been added to the group : ",groupUser:groupUser});
@@ -92,7 +101,7 @@ module.exports = {
                 }
                 else{
                     sails.log.debug("join group: Error: User has no right to do this action.");
-                    return res.forbidden("join group: Error: User has no right to do this action.");
+                    return res.forbidden({msg:"Vous n'avez pas le droit de faire cette action."});
                 }
             })
         });
@@ -168,6 +177,7 @@ module.exports = {
             GroupService.createGroupUser(groupUserModel,function(err,groupUser){
                 if(err)
                     return res.badRequest("askAccess group: Error: The request for join group fail !" + err);
+                Group.publishUpdate(groupUserModel.group,{askAccess:true,codeGroup:codeGroup,email:req.passport.user.email})
                 return res.ok({message:"askAccess group: Success: The request for join group has been register !",groupUser:groupUser});
             })
         });
@@ -178,11 +188,34 @@ module.exports = {
         var giveAdmin = req.param('admin');
         if(giveAdmin === undefined)
             giveAdmin = false;
-        GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,giveAdmin,function(err,success){
-            if(err)
-                return res.badRequest("giveAccess group: "+err);
-            return res.ok({message:"giveAccess group: ",groupUser:success});
+
+        GroupService.findByCode(codeGroup,function(err,group){
+            GroupUser.find({ where : {group_id: group.id,admin:true}}).exec(function (err, group) {
+                if(err) return res.badRequest("giveAccess group: " +err);
+                if(group){
+
+                    if(req.passport.user.id == email && giveAdmin==false && group.length < 1){
+                        sails.log.debug("giveAccess group: Error: Require one administrator !")
+                        return res.badRequest({err: "Il faut au moins un administrateur !"})
+                    }
+
+                    if(group.length > 0){
+                        GroupService.updateGroupUser(codeGroup,req.passport.user.id,email,giveAdmin,function(err,success){
+                            if(err)
+                                return res.badRequest("giveAccess group: "+err);
+                            return res.ok({message:"giveAccess group: ",groupUser:success});
+                        })
+                    }
+                    else
+                        return res.badRequest();
+                }
+                else{
+                    return res.badRequest()
+                }
+            })
         })
+
+
     },
     exit: function(req,res){
         var codeGroup = req.param('code')
@@ -194,6 +227,7 @@ module.exports = {
             GroupService.destroyGroupUserbyUserAndGroup(groupUserModel,function(err,success){
                 if(err)
                     return res.badRequest("exit group: "+err);
+                Group.publishUpdate(group.id,{exit:true,codeGroup:codeGroup,email:req.passport.user.email})
                 return res.ok({msg:"exit group: "+success});
             })
         })
@@ -233,6 +267,8 @@ module.exports = {
                     if(err)
                         return res.badRequest("edit group:"+err);
                     if(admin) {
+                        if(name == "")
+                            name = "Default";
                         group.name = name;
                         group.save(function (err) {
                             if (err) {
@@ -241,6 +277,7 @@ module.exports = {
                             }
                             sails.log.debug("edit group: Success: group has been modified !");
                             console.log(group);
+                            Group.publishUpdate(group.id,{update:true,codeGroup:group.code,name:group.name});
                             return res.ok({message: "edit group: Success: group has been modified !", group: group});
                         })
                     }
@@ -281,7 +318,7 @@ module.exports = {
         GroupService.findByCode(codeGroup, function (err, group) {
             if(err) return res.badRequest("usersWait: Error: Code group not exist: "+err);
             if(group){
-                GroupUser.find({group:group.id, validate:0}).exec(function(err,groupUser) {
+                GroupUser.find({group_id:group.id, validate:0}).exec(function(err,groupUser) {
                     if(err) return res.badRequest("usersWait:"+err);
                     var tabUser = [];
                     if(groupUser){
@@ -294,14 +331,14 @@ module.exports = {
                                         tabUser.push(user);
                                     j++;
                                     if(j == groupUser.length){
-                                        return res.status(200).json({usersWait:tabUser});
                                         sails.log.debug({msg:"usersWait:",tabUser:tabUser})
+                                        return res.status(200).json({usersWait:tabUser});
                                     }
                                 })
                             }
                         }
                         else{
-                            sails.log.debug("usersWait: No user found")
+                            sails.log.debug("usersWait: No user found !!")
                             return res.status(200).json({usersWait:tabUser});
                         }
                     }
@@ -411,7 +448,7 @@ module.exports = {
             if(group){
                 sails.log.debug("---------------------------------------------------------------", group.id);
 
-                var request = "SELECT `user_id`,`admin` FROM `group_user` WHERE `group_id` ="+group.id;
+                var request = "SELECT `user_id`,`admin` FROM `group_user` WHERE `group_id` ="+group.id+" AND `validate` = true";
                     GroupUser.query(request, function(err, results) {
                     if (err) return res.serverError(err);
                     var j = 0;

@@ -40,6 +40,7 @@ module.exports.routes = {
    * route User                                                           *
    ***************************************************************************/
     'put /user/update': 'UserController.update',
+    'put /user/editPassword': 'UserController.updatePassword',
     'post /user/:email':'UserController.findByEmail',
     'get /user':'UserController.get',
 
