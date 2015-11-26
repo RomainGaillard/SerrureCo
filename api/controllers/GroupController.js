@@ -32,7 +32,6 @@ module.exports = {
                     return res.badRequest('create Group:  Error: Fail create group ! :' + err);
                 }
                 sails.log.debug('create Group: Success: Group was successfully created !');
-                console.log(group);
                 groupUserModel.user = req.passport.user.id;
                 groupUserModel.group = group.id;
                 groupUserModel.admin = true;
@@ -275,9 +274,7 @@ module.exports = {
                                 sails.log.debug("edit group: Error: Can't save group. :" + err);
                                 return res.badRequest("edit group: Error: Can't save group :" + err);
                             }
-                            sails.log.debug("edit group: Success: group has been modified !");
-                            console.log(group);
-                            Group.publishUpdate(group.id,{update:true,codeGroup:group.code,name:group.name});
+                            sails.log.debug("edit group: Success: group has been modified !");Group.publishUpdate(group.id,{update:true,codeGroup:group.code,name:group.name});
                             return res.ok({message: "edit group: Success: group has been modified !", group: group});
                         })
                     }
@@ -399,6 +396,7 @@ module.exports = {
         var codeGroup = req.param("code");
         GroupService.findByCode(codeGroup,function(err,group){
             if (err) {
+            if (err) {
                 sails.log.debug("removeLock: Error: Group not found. :"+err);
                 return res.badRequest("removeLock: Error: Group not found. :"+err);
             }
@@ -447,7 +445,7 @@ module.exports = {
                     return res.forbidden("removeLock: Error: User has no right to do this action.");
                 }
             })
-        })
+        }});
     },
     users:function(req,res) {
         var codeGroup = req.param("code");
@@ -548,5 +546,4 @@ module.exports = {
             }
         })
     }
-
 };

@@ -19,12 +19,9 @@ module.exports = {
         var name = req.param('firstname');
         var lastname = req.param('lastname');
         var email = req.param('email');
-        console.log(req.passport.user)
         if(!email || !name || !lastname) return res.badRequest('fields can\'t be empty');
         User.findOne({id: req.passport.user.id}).exec(function (err, user) {
             if(err)return res.send(err.status, err);
-            console.log(email)
-            console.log(user.email)
             //if(email !== user.email)
             //{
             //    console.log('lala')
@@ -77,7 +74,6 @@ module.exports = {
         Passport.findOne({user: req.passport.user.id}).exec(function (err, passport) {
             if(err) return res.send(err.status, err);
             if(passport){
-                console.log(passport);
                 bcrypt.compare(oldPassword,passport.password, function (err, isGood) {
                     if(err) return res.badRequest();
                     if(!isGood){
@@ -115,7 +111,7 @@ module.exports = {
 
     findByEmail: function (req, res, next) {
         var email = req.param('email');
-        User.find({ where: { email: email }, }).exec(function (err, found){
+        User.find({ where: { email: email } }).exec(function (err, found){
             if (found) {
                 next(null,found);
             } else {
@@ -156,5 +152,5 @@ module.exports = {
             return true;
             }
         }*/
-    },
+    }
 };

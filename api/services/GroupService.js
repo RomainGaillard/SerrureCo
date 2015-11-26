@@ -67,7 +67,6 @@ module.exports = {
                                     return callback("Error: Can't save groupUser. :"+ err,null);
                                 }
                                 sails.log.debug("updateGroupUser: Success: groupUser has been modified !");
-                                console.log(groupUser);
                                 Group.publishUpdate(group.id,{giveAccess:true,codeGroup:group.code,email:email,admin:giveAdmin})
                                 return callback(null,{message:"Success: groupUser has been modified !",groupUser:groupUser});
                             })
@@ -96,7 +95,6 @@ module.exports = {
                     return callback("Error: Can't create GroupUser :" + err, null);
                 }
                 sails.log.debug('createGroupUser: Success: GroupUser was successfully created !!');
-                console.log(groupUser);
                 return callback(null,groupUser);
             });
         })
